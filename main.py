@@ -2,6 +2,8 @@ from typing import Annotated, Optional
 
 import typer
 
+from core import passwords, config, history
+
 
 __version__ = "0.1.0"
 
@@ -13,36 +15,9 @@ def version_callback(value: bool):
 
 
 app = typer.Typer(rich_markup_mode="rich")
-
-
-@app.command()
-def passwords():
-    """
-    Manage passwords.
-
-    create, update, or delete passwords.
-    """
-    typer.echo("Here when we create, update and delete passwords")
-
-
-@app.command()
-def config():
-    """
-    Manage configurations.
-
-    configure the ciphering settings (shift amount, multiplier amount, characters replacements, etc...)
-    """
-    typer.echo("Here when we configure the application")
-
-
-@app.command()
-def history():
-    """
-    Access history.
-
-    get password or passwords, save/load history data to a backup, hash passwords on history.
-    """
-    typer.echo("Here when we access the history")
+app.add_typer(passwords.app)
+app.add_typer(config.app)
+app.add_typer(history.app)
 
 
 @app.callback(invoke_without_command=True)
