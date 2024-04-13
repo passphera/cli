@@ -2,10 +2,9 @@ from typing import Annotated, Optional
 
 import typer
 
-from core import passwords, config, history
+from core.cli import config, history, passwords
 
-
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 def version_callback(value: bool):
@@ -28,7 +27,8 @@ def main(
                 "--version",
                 "-v",
                 callback=version_callback,
-                is_eager=True)] = None,):
+                is_eager=True)] = None,
+) -> None:
     """
     Strong passwords generator cli tool to keep track of all your passwords.
     """
