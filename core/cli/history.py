@@ -4,7 +4,7 @@ import typer
 app = typer.Typer()
 
 
-@app.callback()
+@app.callback(invoke_without_command=False)
 def history():
     """
     Access history.
