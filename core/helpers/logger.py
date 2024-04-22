@@ -1,24 +1,39 @@
 import logging
-import os
-from datetime import datetime
 
 
 class Logger:
-    def __init__(self, path):
-        log_file = os.path.join(path, f"log_{datetime.now().strftime('%Y-%m-%d')}.log")
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s]: %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-            filename=log_file,
-            filemode="a",
-        )
+    _logger = None
 
-    def log_info(self, message):
-        logging.info(message)
+    @classmethod
+    def configure(cls, log_file_path):
+        if cls._logger is None:
+            try:
+                cls._logger = logging.getLogger(__name__)
+                cls._logger.setLevel(logging.INFO)
 
-    def log_warning(self, message):
-        logging.warning(message)
+                formatter = logging.Formatter("%(asctime)s [%(levelname)s]: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
-    def log_error(self, message):
-        logging.error(message)
+                file_handler = logging.FileHandler(log_file_path)
+                file_handler.setFormatter(formatter)
+
+                cls._logger.addHandler(file_handler)
+            except Exception as e:
+                print(f"Error configuring logger: {e}")
+
+    @classmethod
+    def get_instance(cls):
+        if cls._logger is None:
+            raise RuntimeError("Logger not configured. Call configure() first.")
+        return cls._logger
+
+    @classmethod
+    def log_info(cls, message):
+        cls.get_instance().info(message)
+
+    @classmethod
+    def log_warning(cls, message):
+        cls.get_instance().warning(message)
+
+    @classmethod
+    def log_error(cls, message):
+        cls.get_instance().error(message)

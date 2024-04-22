@@ -16,10 +16,6 @@ def _display_menu(m, r):
             print(f"[red]Invalid input. Please enter a number.")
 
 
-def display_hello_message():
-    print(f"[green]passphera CLI - Password Generator Command Line Tool")
-
-
 def display_main_menu():
     m = """1. Manage Passwords
 2. Manage Configurations
@@ -39,7 +35,7 @@ def display_passwords_menu():
     return _display_menu(m, r)
 
 
-def display_config_menu():
+def display_settings_menu():
     m = """1.  Back
 2.  Change the shift of the encryption
 3.  Reset the shift to its default value
@@ -87,12 +83,10 @@ def display_context_error_message(context):
 
 
 def display_replacement_error_message(replacement):
-    print(f"[red]'{replacement}' is not a valid replacement, you should chose another replacement\n"
-          f"Allowed special character: ('!', '@', '$', '^', '-', '_', '=', '+', ',', '.', '/', ':')")
-
-
-def display_exit_message():
-    print(f"[green]Thanks for using our tool. Bye!")
+    print(f"[red]'[bold]{replacement}[/bold]' is not a valid replacement, you should chose another replacement[/red]\n"
+          f"Allowed special characters: [green]'!', '@', '$', '^', '-', '_', '=', '+', ',', '.', '/', ':'[/green]\n"
+          f"Disallowed special characters: [red]'`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', ''', "
+          f"'\"', '|', '\'[/red]")
 
 
 def get_text():

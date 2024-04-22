@@ -5,7 +5,7 @@ app = typer.Typer()
 
 
 @app.callback(invoke_without_command=False)
-def config():
+def settings():
     """
     Manage configurations.
 
