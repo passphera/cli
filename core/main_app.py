@@ -5,11 +5,10 @@ from typing import Annotated, Optional
 
 import typer
 
+from core.backend import history as b_history, logger as b_logger, settings as b_settings
 from core.cli import history, passwords, settings
 from core.helpers import config
-from core.helpers.history import History
-from core.helpers.logger import Logger
-from core.helpers.main_loop import main_loop
+from core.helpers.app_loops import main_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -42,10 +41,18 @@ def main():
     if platform_name == 'Linux':
         config.setup_xdg_variables()
     config.create_dirs(paths)
-    log_file_path = os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log")
-    Logger.configure(log_file_path)
+
     history_file_path = os.path.join(paths['data'], "history.json")
-    History.configure(history_file_path)
+    log_file_path = os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log")
+    settings_file_path = os.path.join(paths['config'], "config.ini")
+
+    b_history.configure(history_file_path)
+    b_logger.configure(log_file_path)
+    b_settings.configure(settings_file_path)
+
+    for key, value in b_settings.get_settings(b_settings.__characters_replacements__).items():
+        config.generator.replace_character(key, value)
+
     app()
 
 

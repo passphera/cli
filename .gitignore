@@ -160,3 +160,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+
+$XDG_CACHE_HOME
+$XDG_CONFIG_HOME
+$XDG_DATA_HOME

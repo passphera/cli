@@ -1,6 +1,6 @@
 import typer
 
-from core.helpers import interface
+from core.backend import interface
 
 
 def main_loop() -> None:

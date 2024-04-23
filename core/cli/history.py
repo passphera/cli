@@ -11,7 +11,7 @@ def history():
 
     get password or passwords, save/load history data to a backup, hash passwords on history.
     """
-    typer.echo("Here when we access the history")
+    pass
 
 
 @app.command()

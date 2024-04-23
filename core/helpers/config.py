@@ -2,6 +2,8 @@ import os
 
 import typer
 
+from passphera_core import PasswordGenerator
+
 __version__ = '0.3.0'
 __author__ = 'Fathi Abdelmalek'
 __email__ = 'passphera@gmail.com'
@@ -57,3 +59,6 @@ def version_callback(value: bool):
     if value:
         print(typer.style(f"Version {__version__}", fg=typer.colors.GREEN, bold=True))
         raise typer.Exit()
+
+
+generator = PasswordGenerator()
