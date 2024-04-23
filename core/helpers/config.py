@@ -4,7 +4,7 @@ import typer
 
 from passphera_core import PasswordGenerator
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __author__ = 'Fathi Abdelmalek'
 __email__ = 'passphera@gmail.com'
 __url__ = 'https://github.com/passphera/cli'
