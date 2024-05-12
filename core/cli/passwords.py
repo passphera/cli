@@ -4,20 +4,22 @@ import typer
 from rich.prompt import Prompt
 
 from core.backend import history, interface, logger
+from core.helpers.app_loops import passwords_loop
 from core.helpers.config import generator
 
 
 app = typer.Typer()
 
 
-@app.callback(invoke_without_command=False)
+@app.callback(invoke_without_command=True)
 def passwords(ctx: typer.Context) -> None:
     """
-    Manage passwords.
+    Manage passwords
 
     create, update, or delete passwords.
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        passwords_loop()
 
 
 @app.command()
@@ -26,6 +28,7 @@ def generate(
         key: Annotated[Optional[str], typer.Option("-k", "--key")] = '',
         context: Annotated[Optional[str], typer.Option("-c", "--context")] = ''
 ) -> None:
+    """Generate new password (and optionally save it)"""
     if text == '':
         typer.echo("Text can't be empty")
         return
@@ -53,6 +56,7 @@ def update(
         text: Annotated[str, typer.Option("-t", "--text", prompt="Enter the text to encrypt")],
         key: Annotated[Optional[str], typer.Option("-k", "--key")] = '',
 ) -> None:
+    """Update a saved password"""
     entry = history.get_password(context)
     if text == '':
         text = entry['text']
@@ -76,6 +80,7 @@ def update(
 
 @app.command()
 def delete(context: Annotated[str, typer.Argument(help="The context you want to update the password for")],) -> None:
+    """Delete a saved password"""
     entry = history.get_password(context)
     if history.remove_password(context):
         interface.display_password_removed_message()

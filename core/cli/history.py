@@ -1,52 +1,55 @@
 import typer
 
+from core.helpers.app_loops import history_loop
+
 
 app = typer.Typer()
 
 
-@app.callback(invoke_without_command=False)
-def history():
+@app.callback(invoke_without_command=True)
+def history(ctx: typer.Context):
     """
-    Access history.
+    Access history
 
     get password or passwords, save/load history data to a backup, hash passwords on history.
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        history_loop()
 
 
 @app.command()
 def get():
-    pass
+    """Get a saved password from history"""
 
 
 @app.command()
 def show_all():
-    pass
+    """Show all saved passwords"""
 
 
 @app.command()
 def clear():
-    pass
+    """Clear history from all saved passwords"""
 
 
 @app.command()
 def save_backup():
-    pass
+    """Save backup history"""
 
 
 @app.command()
 def load_backup():
-    pass
+    """Load history from a saved backup"""
 
 
 @app.command()
 def encrypt():
-    pass
+    """Encrypt passwords on history"""
 
 
 @app.command()
 def decrypt():
-    pass
+    """Decrypt passwords on history"""
 
 
 if __name__ == "__main__":

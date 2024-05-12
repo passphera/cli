@@ -29,7 +29,9 @@ Rich can do a pretty *decent* job of rendering markdown.
 
 python code
 ```python
-h = list()
+from typing import List
+
+h = List()
 h.append(1)
 ```
 java code
@@ -58,18 +60,16 @@ def main():
     e1.add("CC1-C1-P")
     e1.add("CC2-C1-P").add("CCC1-CC2-C1-P")
     e1.add("CC3-C1-P")
-    e2.add("CC1-C1-P")
-    e2.add("CC2-C1-P")
-    console.print(md)
+    e2.add("CC1-C2-P")
+    e2.add("CC2-C2-P")
+    console.print(Panel(md))
     console.print(Panel("Hello [red]World!", title="Welcome Message", subtitle="First message"))
-    # console.print(Panel.fit("Hello [red]World[/bold] Again!"))
+    console.print(Panel.fit("Hello [bold red]World[/bold red] Again!"))
     console.print(tree)
     with Progress() as progress:
-
         task1 = progress.add_task("[red]Downloading...", total=1000)
         task2 = progress.add_task("[green]Processing...", total=1000)
         task3 = progress.add_task("[cyan]Cooking...", total=1000)
-
         while not progress.finished:
             progress.update(task1, advance=0.5)
             progress.update(task2, advance=0.3)
@@ -91,7 +91,7 @@ def main():
         degree: str = Prompt.ask("What is your degree?", choices=["License", "Master", "Phd"])
         table = Table("firstname", "age", "sex", "degree", show_header=True, header_style="bold cyan")
         table.add_row(name, str(age), sex, degree)
-        console.print(table)
+        console.print(Panel(table))
     console.print("Goodbye")
 
 

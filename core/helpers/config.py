@@ -4,7 +4,7 @@ import typer
 
 from passphera_core import PasswordGenerator
 
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 __author__ = 'Fathi Abdelmalek'
 __email__ = 'passphera@gmail.com'
 __url__ = 'https://github.com/passphera/cli'
@@ -57,7 +57,7 @@ def create_dirs(paths):
 
 def version_callback(value: bool):
     if value:
-        print(typer.style(f"Version {__version__}", fg=typer.colors.GREEN, bold=True))
+        print(typer.style(f"Version {__version__}", fg=typer.colors.CYAN, bold=True))
         raise typer.Exit()
 
 
