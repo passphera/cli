@@ -2,7 +2,8 @@ from typing import Annotated
 
 import typer
 
-from core.backend import interface, logger, settings
+from core.backend import logger, settings
+from core.helpers import interface
 from core.helpers.app_loops import settings_loop
 from core.helpers.config import generator
 
@@ -11,26 +12,22 @@ app = typer.Typer()
 
 
 @app.callback(invoke_without_command=True)
-def settings(ctx: typer.Context):
+def settings_callback(ctx: typer.Context) -> None:
     """
-    Manage configurations
-
-    configure the ciphering settings (shift amount, multiplier amount, characters replacements, etc...)
+    Manage configurations, configure the ciphering settings (shift amount, multiplier amount, characters replacements, etc...)
     """
     if ctx.invoked_subcommand is None:
         settings_loop()
 
 
 @app.command()
-def shift():
+def shift() -> None:
     """Change ciphering shift setting"""
-    pass
 
 
 @app.command()
-def reset_shift():
+def reset_shift() -> None:
     """Reset ciphering shift setting to default value"""
-    pass
 
 
 @app.command()
@@ -53,8 +50,8 @@ def replace(
 
 @app.command()
 def reset_rep(
-    character: Annotated[str, typer.Argument(help="Character to reset it")]
-):
+        character: Annotated[str, typer.Argument(help="Character to reset it")]
+) -> None:
     """reset a character's replacement"""
     generator.reset_character(character)
     settings.delete_key(settings.__characters_replacements__, character)
@@ -63,15 +60,22 @@ def reset_rep(
 
 
 @app.command()
-def char_rep():
+def show_rep(
+        character: Annotated[str, typer.Argument(help="Character to reset it")]
+) -> None:
     """Show a specific character's replacement string"""
-    pass
+    replacement: str | None = settings.get_key(settings.__characters_replacements__, character)
+    if replacement is not None:
+        interface.display_character_replacement(character, replacement)
+    else:
+        interface.display_error("There is no replacement for this character")
 
 
 @app.command()
-def all_reps():
+def all_reps() -> None:
     """Show all character's replacement strings"""
-    pass
+    replacements: dict[str, str] = settings.get_settings(settings.__characters_replacements__)
+    interface.display_character_replacements(replacements)
 
 
 if __name__ == "__main__":

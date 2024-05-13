@@ -3,7 +3,8 @@ from typing import Annotated, Optional
 import typer
 from rich.prompt import Prompt
 
-from core.backend import history, interface, logger
+from core.backend import history, logger
+from core.helpers import interface
 from core.helpers.app_loops import passwords_loop
 from core.helpers.config import generator
 
@@ -12,11 +13,9 @@ app = typer.Typer()
 
 
 @app.callback(invoke_without_command=True)
-def passwords(ctx: typer.Context) -> None:
+def passwords_callback(ctx: typer.Context) -> None:
     """
-    Manage passwords
-
-    create, update, or delete passwords.
+    Manage passwords, create, update, or delete passwords.
     """
     if ctx.invoked_subcommand is None:
         passwords_loop()
@@ -42,7 +41,10 @@ def generate(
     else:
         key = generator.key_str
     password = generator.generate_password()
-    interface.display_password(text, key, password)
+    if context is None:
+        interface.display_password(password, text, key)
+    else:
+        interface.display_password(password, text, key, context)
     interface.copy_to_clipboard(password)
     logger.log_info("new password generated successfully")
     if context != '':
@@ -70,7 +72,7 @@ def update(
         password = generator.generate_password()
         interface.display_password(text, key, password)
         interface.copy_to_clipboard(password)
-        history.update_password(context, text, key, password)
+        history.add_to_history(context, text, key, password)
         logger.log_info(f"password updated successfully")
         logger.log_info(f"password saved on history")
         return

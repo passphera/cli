@@ -4,7 +4,7 @@ import typer
 
 from passphera_core import PasswordGenerator
 
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 __author__ = 'Fathi Abdelmalek'
 __email__ = 'passphera@gmail.com'
 __url__ = 'https://github.com/passphera/cli'
@@ -34,7 +34,7 @@ __paths__ = {
     }
 
 
-def setup_xdg_variables():
+def setup_xdg_variables() -> None:
     if __xdg_cache_home__ is None:
         os.environ["XDG_CACHE_HOME"] = os.path.expanduser("~/.cache")
     if __xdg_config_home__ is None:
@@ -43,19 +43,19 @@ def setup_xdg_variables():
         os.environ["XDG_DATA_HOME"] = os.path.expanduser("~/.local/share")
 
 
-def setup_paths(platform_name):
+def setup_paths(platform_name) -> dict[str, str]:
     if platform_name not in __paths__:
         raise Exception("Unsupported platform")
     return __paths__[platform_name]
 
 
-def create_dirs(paths):
+def create_dirs(paths: dict[str, str]) -> None:
     for path in paths.values():
         if not os.path.exists(path):
             os.makedirs(path)
 
 
-def version_callback(value: bool):
+def version_callback(value: bool) -> None:
     if value:
         print(typer.style(f"Version {__version__}", fg=typer.colors.CYAN, bold=True))
         raise typer.Exit()

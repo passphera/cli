@@ -1,10 +1,11 @@
 import logging
 
+from core.helpers import interface
 
-__logger__ = None
+__logger__: logging.Logger | None = None
 
 
-def configure(path):
+def configure(path: str) -> None:
     global __logger__
     if __logger__ is None:
         try:
@@ -18,22 +19,22 @@ def configure(path):
 
             __logger__.addHandler(file_handler)
         except Exception as e:
-            print(f"Error configuring logger: {e}")
+            interface.display_error(f"Error configuring logger: {e}")
 
 
-def get_instance():
+def get_instance() -> logging.Logger:
     if __logger__ is None:
         raise RuntimeError("Logger not configured. Call configure() first.")
     return __logger__
 
 
-def log_info(message):
+def log_info(message: str) -> None:
     get_instance().info(message)
 
 
-def log_warning(message):
+def log_warning(message: str) -> None:
     get_instance().warning(message)
 
 
-def log_error(message):
+def log_error(message: str) -> None:
     get_instance().error(message)

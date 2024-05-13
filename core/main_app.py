@@ -11,10 +11,10 @@ from core.helpers import config
 from core.helpers.app_loops import main_loop
 
 
-app = typer.Typer(rich_markup_mode="rich")
-app.add_typer(cli_passwords.app)
-app.add_typer(cli_settings.app)
-app.add_typer(cli_history.app)
+app: typer.Typer = typer.Typer(rich_markup_mode="rich")
+app.add_typer(cli_passwords.app, name="passwords")
+app.add_typer(cli_settings.app, name="settings")
+app.add_typer(cli_history.app, name="history")
 
 
 @app.callback(invoke_without_command=True)
@@ -35,7 +35,7 @@ def app_callback(
         main_loop()
 
 
-def main():
+def main() -> None:
     platform_name = platform.system()
     if platform_name == 'Linux':
         config.setup_xdg_variables()
