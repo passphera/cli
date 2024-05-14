@@ -7,7 +7,7 @@ from core.helpers import interface
 from core.helpers.app_loops import history_loop
 
 
-app = typer.Typer()
+app = typer.Typer(rich_markup_mode="rich")
 
 
 @app.callback(invoke_without_command=True)

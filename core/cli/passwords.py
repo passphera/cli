@@ -9,7 +9,7 @@ from core.helpers.app_loops import passwords_loop
 from core.helpers.config import generator
 
 
-app = typer.Typer()
+app = typer.Typer(rich_markup_mode="rich")
 
 
 @app.callback(invoke_without_command=True)
