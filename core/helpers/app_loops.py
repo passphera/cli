@@ -1,6 +1,6 @@
 import typer
 
-from core.helpers import interface
+from core.helpers import interface, functions
 
 
 def main_loop() -> None:
@@ -25,6 +25,12 @@ def passwords_loop() -> None:
                 raise typer.Exit()
             case 1:
                 main_loop()
+            case 2:
+                functions.generate_password()
+            case 3:
+                functions.update_password()
+            case 4:
+                functions.delete_password()
 
 
 def settings_loop() -> None:

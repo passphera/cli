@@ -71,20 +71,15 @@ def display_history_menu() -> int:
     return _display_menu(prompt, choices, "passphera CLI History Menu")
 
 
-def display_password(password: dict[str, str] | str, text: str = None, key: str = None, context: str = '') -> None:
-    table: Table = Table("text", "key", "password", show_header=True, header_style="bold magenta",
+def display_password(password: dict[str, str] | str, text: str, key: str, context: str = '') -> None:
+    table: Table = Table("context", "text", "key", "password", show_header=True, header_style="bold magenta",
                          border_style="blue")
     if type(password) is dict:
         table.add_column("context")
-        table.add_row(password['text'], password['key'], password['password'], password['context'])
+        table.add_row(password['context'], password['text'], password['key'], password['password'])
         _display_panel(table)
-        return
     else:
-        if context != '':
-            table.add_column("context")
-            table.add_row(text, key, password, context)
-        else:
-            table.add_row(text, key, password)
+        table.add_row(context, text, key, password)
         _display_panel(table)
 
 

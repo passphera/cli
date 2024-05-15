@@ -31,10 +31,10 @@ def save_history() -> None:
             json.dump(__history__, f, indent=4)
 
 
-def add_to_history(text: str, key: str, password: str, context: str) -> None:
+def add_to_history(password: str, text: str, key: str, context: str) -> None:
     entry = {
-        "text": text,
         "context": context,
+        "text": text,
         "key": key,
         "password": password,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
