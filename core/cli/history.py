@@ -16,7 +16,8 @@ def history_callback(ctx: typer.Context) -> None:
     Access history, get password or passwords, save/load history data to a backup, hash passwords on history.
     """
     if ctx.invoked_subcommand is None:
-        history_loop()
+        while True:
+            history_loop()
 
 
 @app.command()

@@ -8,7 +8,7 @@ from passphera_core import PasswordGenerator
 
 from core.backend import history, logger, settings
 
-__version__: str = '0.8.0'
+__version__: str = '0.9.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'

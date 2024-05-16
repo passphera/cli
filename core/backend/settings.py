@@ -1,6 +1,9 @@
 import os
 from configparser import ConfigParser
 
+from core.backend import logger
+from core.helpers import config
+
 
 __file__: str | None = None
 __characters_replacements__: str = "Characters Replacements"
@@ -11,6 +14,7 @@ __algorithm__: str = "Primary Algorithm"
 __shift__: str = "Shift Amount"
 __multiplier__: str = "Multiplier Amount"
 __encrypted__: str = "Encrypted"
+
 
 __config: ConfigParser = ConfigParser()
 
@@ -55,3 +59,58 @@ def get_settings(section: str) -> dict[str, str]:
         for key, value in __config.items(section):
             items[key] = value
     return items
+
+
+def set_setting(section: str, key: str, value: str) -> None:
+    set_key(section, key, value)
+    save_settings()
+
+
+def change_algorithm(name: str) -> None:
+    config.generator.algorithm = name
+    set_setting(__encryption_method__, __algorithm__, name)
+    logger.log_info(f"Primary algorithm changed to {name}")
+
+
+def reset_algorithm() -> None:
+    config.generator.algorithm = config.__default_algorithm__
+    set_setting(__encryption_method__, __algorithm__, config.__default_algorithm__)
+    logger.log_info(f"Primary algorithm reset to it's default")
+
+
+def change_shift(amount: int) -> None:
+    config.generator.shift = amount
+    set_setting(__encryption_method__, __shift__, str(amount))
+    logger.log_info(f"Changed ciphering shift to {amount}")
+
+
+def reset_shift() -> None:
+    config.generator.shift = config.__default_shift__
+    set_setting(__encryption_method__, __shift__, config.__default_shift__)
+    logger.log_info(f"Reset ciphering shift settings to default value")
+
+
+def change_multiplier(value: int) -> None:
+    config.generator.multiplier = value
+    set_setting(__encryption_method__, __multiplier__, str(value))
+    logger.log_info(f"Changed ciphering multiplier to {value}")
+
+
+def reset_multiplier() -> None:
+    config.generator.shift = config.__default_multiplier__
+    set_setting(__encryption_method__, __multiplier__, config.__default_multiplier__)
+    logger.log_info(f"Reset ciphering multiplier settings to default value (3)")
+
+
+def replace_character(character: str, replacement: str) -> None:
+    if replacement in ['`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', '\'', '"', '|', '\\']:
+        raise ValueError
+    config.generator.replace_character(character, replacement)
+    set_setting(__characters_replacements__, character, replacement)
+    logger.log_info(f"Replaced {character} with {replacement}")
+
+
+def reset_replacement(character: str) -> None:
+    config.generator.reset_character(character)
+    set_setting(__characters_replacements__, character, character)
+    logger.log_info(f"reset character {character} to its default")

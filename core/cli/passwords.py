@@ -17,7 +17,8 @@ def passwords_callback(ctx: typer.Context) -> None:
     Manage passwords, create, update, or delete passwords.
     """
     if ctx.invoked_subcommand is None:
-        passwords_loop()
+        while True:
+            passwords_loop()
 
 
 @app.command()

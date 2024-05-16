@@ -46,12 +46,16 @@ def display_passwords_menu() -> int:
 
 def display_settings_menu() -> int:
     prompt = """1.  Back
-2.  Change the shift of the encryption
-3.  Reset the shift to its default value
-4.  Replace an alphabet character with a set of custom characters
-5.  Reset an alphabet character replacement to it's default
-6.  Show a specific character replacement
-7.  Show all characters replacements
+2.  Change the primary algorithm
+3.  Reset the primary algorithm to default
+4.  Change multiplier
+5.  Reset the multiplier to default
+6.  Change the shift of the encryption
+7.  Reset the shift to its default value
+8.  Replace an alphabet character with a set of custom characters
+9.  Reset an alphabet character replacement to it's default
+10. Show a specific character replacement
+11. Show all characters replacements
 0.  Exit"""
     choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     return _display_menu(prompt, choices, "passphera CLI Settings Menu")
@@ -124,7 +128,11 @@ def display_replacement_error_message(replacement: str) -> None:
 
 
 def display_error(error: str) -> None:
-    console.print(f"[red]There is an error: {error}")
+    _display_panel(f"[red]There is an error: {error}")
+
+
+def display_message(message: str) -> None:
+    _display_panel(message)
 
 
 def get_text() -> str:
