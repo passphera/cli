@@ -67,3 +67,17 @@ def history_loop() -> None:
             raise typer.Exit()
         case 1:
             main_loop()
+        case 2:
+            functions.get_password()
+        case 3:
+            functions.get_all_passwords()
+        case 4:
+            functions.clear_history()
+        case 5:
+            functions.save_back_up()
+        case 6:
+            functions.load_back_up()
+        case 7:
+            functions.encrypt_history()
+        case 8:
+            functions.decrypt_history()

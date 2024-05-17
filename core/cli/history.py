@@ -21,7 +21,7 @@ def history_callback(ctx: typer.Context) -> None:
 
 
 @app.command()
-def get(context: Annotated[str, typer.Argument(help="The context you want to get")]) -> None:
+def get(context: Annotated[str, typer.Argument(help="The context to get it's password")]) -> None:
     """Get a saved password from history"""
     password: dict[str, str] = history.get_password(context)
     if password is not None:

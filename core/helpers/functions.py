@@ -107,3 +107,38 @@ def show_replacement() -> None:
 def show_all_replacements() -> None:
     replacements: dict[str, str] = settings.get_settings(settings.__characters_replacements__)
     interface.display_character_replacements(replacements)
+
+
+def get_password() -> None:
+    context: str = typer.prompt("Enter the context to get it's password")
+    password: dict[str, str] = history.get_password(context)
+    if password is not None:
+        interface.display_password(password)
+        interface.copy_to_clipboard(password['password'])
+    else:
+        interface.display_context_error_message(context)
+
+
+def get_all_passwords() -> None:
+    interface.display_passwords(history.__history__)
+
+
+def clear_history() -> None:
+    history.clear_history()
+    interface.display_clear_history_message()
+
+
+def save_back_up() -> None:
+    pass
+
+
+def load_back_up() -> None:
+    pass
+
+
+def encrypt_history() -> None:
+    pass
+
+
+def decrypt_history() -> None:
+    pass

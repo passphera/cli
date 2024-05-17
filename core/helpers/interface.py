@@ -27,7 +27,7 @@ def _display_menu(prompt: str, choices: list[int], title: str) -> int:
 
 def display_main_menu() -> int:
     prompt = """1. Manage Passwords
-2. Manage Configurations
+2. Manage Settings
 3. Manage History
 0. Exit"""
     choices = [0, 1, 2, 3]
@@ -75,11 +75,10 @@ def display_history_menu() -> int:
     return _display_menu(prompt, choices, "passphera CLI History Menu")
 
 
-def display_password(password: dict[str, str] | str, text: str, key: str, context: str = '') -> None:
+def display_password(password: dict[str, str] | str, text: str = '', key: str = '', context: str = '') -> None:
     table: Table = Table("context", "text", "key", "password", show_header=True, header_style="bold magenta",
                          border_style="blue")
     if type(password) is dict:
-        table.add_column("context")
         table.add_row(password['context'], password['text'], password['key'], password['password'])
         _display_panel(table)
     else:
