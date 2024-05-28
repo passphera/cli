@@ -10,10 +10,10 @@ __characters_replacements__: str = "Characters Replacements"
 __encryption_method__: str = "Encryption Method"
 __history__: str = "History"
 
-__algorithm__: str = "Primary Algorithm"
-__shift__: str = "Shift Amount"
-__multiplier__: str = "Multiplier Amount"
-__encrypted__: str = "Encrypted"
+__algorithm__: str = "primary-algorithm"
+__shift__: str = "shift-amount"
+__multiplier__: str = "multiplier-amount"
+__encrypted__: str = "encrypted"
 
 
 __config: ConfigParser = ConfigParser()

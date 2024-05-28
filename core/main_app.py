@@ -18,7 +18,8 @@ def app_callback(ctx: typer.Context,
     passphera-cli - Strong passwords generator cli tool to keep track of all your passwords.
     """
     if ctx.invoked_subcommand is None:
-        app_loops.main_loop()
+        while True:
+            app_loops.main_loop()
 
 
 def main() -> None:
