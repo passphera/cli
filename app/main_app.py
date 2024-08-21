@@ -1,13 +1,14 @@
 import typer
 
-from core.cli import history, passwords, settings
-from core.helpers import app_loops, config
+from app.cli import history, passwords, settings, auth
+from app.core import app_loops, config
 
 
 app: typer.Typer = typer.Typer(rich_markup_mode="rich")
 app.add_typer(passwords.app, name="passwords")
 app.add_typer(settings.app, name="settings")
 app.add_typer(history.app, name="history")
+app.add_typer(auth.app, name="auth")
 
 
 @app.callback(invoke_without_command=True)

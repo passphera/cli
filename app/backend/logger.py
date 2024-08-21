@@ -1,6 +1,6 @@
 import logging
 
-from core.helpers import interface
+from app.core import interface
 
 __logger__: logging.Logger | None = None
 

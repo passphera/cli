@@ -3,9 +3,9 @@ from typing import Annotated, Optional
 import typer
 from rich.prompt import Prompt
 
-from core.backend import history, logger, passwords
-from core.helpers import interface
-from core.helpers.app_loops import passwords_loop
+from app.backend import history, logger, passwords
+from app.core import interface
+from app.core.app_loops import passwords_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -28,11 +28,8 @@ def generate(
         context: Annotated[Optional[str], typer.Option("-c", "--context")] = ''
 ) -> None:
     """Generate new password (and optionally save it)"""
-    if text == '':
-        typer.echo("Text can't be empty")
-        return
     if not key:
-        key = Prompt.ask("Enter a key [or leave blank for default]")
+        key = Prompt.ask("Enter the key (leave blank for default)", default=generator.key, show_default=False)
     if not context:
         context = Prompt.ask("Enter a context if you want to save the password")
     passwords.generate_password(text, key, context)

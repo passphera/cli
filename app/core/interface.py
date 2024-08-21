@@ -57,7 +57,7 @@ def display_settings_menu() -> int:
 10. Show a specific character replacement
 11. Show all characters replacements
 0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     return _display_menu(prompt, choices, "passphera CLI Settings Menu")
 
 
@@ -71,8 +71,18 @@ def display_history_menu() -> int:
 7.  Encrypt passwords on history file
 8.  Decrypt passwords on history file
 0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5, 6]
+    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     return _display_menu(prompt, choices, "passphera CLI History Menu")
+
+
+def display_auth_menu() -> int:
+    prompt = """1. Back
+2. Login with email and password
+3. Logout
+4. Register new user
+0. Exit"""
+    choices = [0, 1, 2, 3, 4]
+    return _display_menu(prompt, choices, "passphera CLI Authentication Menu")
 
 
 def display_password(password: dict[str, str] | str, text: str = '', key: str = '', context: str = '') -> None:
@@ -123,7 +133,7 @@ def display_replacement_error_message(replacement: str) -> None:
     console.print(f"[red]'[bold]{replacement}[/bold]' is not a valid replacement, you should chose another "
                   f"replacement[/red]\nAllowed special characters: [green]'!', '@', '$', '^', '-', '_', '=', '+', ',', "
                   f"'.', '/', ':'[/green]\nDisallowed special characters: [red]'`', '~', '#', '%', '&', '*', '(', ')',"
-                  f" '<', '>', '?', ';', ''', '\"', '|', '\'[/red]")
+                  f" '<', '>', '?', ';', ''', '\"', '|', '\\'[/red]")
 
 
 def display_error(error: str) -> None:

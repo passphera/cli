@@ -2,9 +2,9 @@ from typing import Annotated
 
 import typer
 
-from core.backend import history
-from core.helpers import interface
-from core.helpers.app_loops import history_loop
+from app.backend import history
+from app.core import interface
+from app.core.app_loops import history_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")

@@ -3,9 +3,9 @@ from typing import Annotated
 import typer
 from passphera_core import InvalidAlgorithmException
 
-from core.backend import logger, settings
-from core.helpers import interface
-from core.helpers.app_loops import settings_loop
+from app.backend import logger
+from app.core import config, interface, settings
+from app.core.app_loops import settings_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -27,7 +27,8 @@ def algorithm(
 ) -> None:
     """Change ciphering primary algorithm setting"""
     try:
-        settings.change_algorithm(name)
+        config.generator.algorithm = name
+        settings.set_key(settings.__encryption_method__, settings.__algorithm__, name)
         interface.display_message(f"Primary Algorithm has been changed to {name}")
         logger.log_info(f"Primary Algorithm has been changed to {name}")
     except InvalidAlgorithmException:
@@ -38,7 +39,8 @@ def algorithm(
 @app.command()
 def reset_algo() -> None:
     """Reset ciphering primary algorithm setting to default"""
-    settings.reset_algorithm()
+    config.generator.algorithm = config.__default_algorithm__
+    settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.__default_algorithm__)
     interface.display_message("Primary Algorithm has been changed to default")
     logger.log_info("Primary Algorithm has been changed to default")
 
@@ -48,7 +50,8 @@ def shift(
         amount: Annotated[int, typer.Argument(help="The amount to shift to")],
 ) -> None:
     """Change ciphering shift setting"""
-    settings.change_shift(amount)
+    config.generator.shift = amount
+    settings.set_key(settings.__encryption_method__, settings.__shift__, str(amount))
     interface.display_message(f"Shift has been changed to {amount}")
     logger.log_info(f"Shift has been changed to {amount}")
 
@@ -56,7 +59,8 @@ def shift(
 @app.command()
 def reset_shift() -> None:
     """Reset ciphering shift setting to default value"""
-    settings.reset_shift()
+    config.generator.shift = config.__default_shift__
+    settings.set_key(settings.__encryption_method__, settings.__shift__, config.__default_shift__)
     interface.display_message("Shift has been changed to default")
     logger.log_info("Shift has been changed to default")
 
@@ -66,7 +70,8 @@ def multiplier(
         value: Annotated[int, typer.Argument(help="The value to multiply by")],
 ) -> None:
     """Change ciphering multiplier setting"""
-    settings.change_multiplier(value)
+    config.generator.multiplier = value
+    settings.set_key(settings.__encryption_method__, settings.__multiplier__, str(value))
     interface.display_message(f"Multiplier has been changed to {value}")
     logger.log_info(f"Multiplier has been changed to {value}")
 
@@ -74,9 +79,31 @@ def multiplier(
 @app.command()
 def reset_mul() -> None:
     """Reset ciphering multiplier setting to default value"""
-    settings.reset_multiplier()
+    config.generator.shift = config.__default_multiplier__
+    settings.set_key(settings.__encryption_method__, settings.__multiplier__, config.__default_multiplier__)
     interface.display_message("Multiplier has been changed to default")
     logger.log_info("Multiplier has been changed to default")
+
+
+@app.command()
+def key(
+        new_key: Annotated[str, typer.Argument(help="The key to use in encryption")]
+) -> None:
+    """Change ciphering key setting"""
+    config.generator.key = new_key
+    settings.set_key(settings.__encryption_method__, settings.__key__, new_key)
+    interface.display_message(f"Multiplier has been changed to {new_key}")
+    logger.log_info(f"Changed key to {new_key}")
+
+
+@app.command()
+def reset_key() -> None:
+    """Reset ciphering key setting to default value"""
+    config.generator.key = config.__default_key__
+    settings.set_key(settings.__encryption_method__, settings.__key__, config.__default_key__)
+    interface.display_message("Key has been changed to default")
+    logger.log_info("Key has been changed to default")
+
 
 
 @app.command()
@@ -86,7 +113,10 @@ def replace_char(
 ) -> None:
     """Replace character with a replacement string"""
     try:
-        settings.replace_character(character, replacement)
+        if replacement in ['`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', '\'', '"', '|', '\\']:
+            raise ValueError
+        config.generator.replace_character(character, replacement)
+        settings.set_key(settings.__characters_replacements__, character, replacement)
         interface.display_message(f"Character {character} has been replaced with {replacement}")
         logger.log_info(f"Character {character} has been replaced with {replacement}")
     except ValueError:
@@ -99,7 +129,8 @@ def reset_rep(
         character: Annotated[str, typer.Argument(help="Character to reset it")]
 ) -> None:
     """reset a character's replacement"""
-    settings.reset_replacement(character)
+    config.generator.reset_character(character)
+    settings.set_key(settings.__characters_replacements__, character, character)
     interface.display_message(f"Character {character}'s replacement has been removed")
     logger.log_info(f"Character {character}'s replacement has been removed")
 

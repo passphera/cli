@@ -1,14 +1,14 @@
-from core.backend import history, logger
-from core.helpers import interface
-from core.helpers.config import generator
+from app.backend import history, logger
+from app.core import interface
+from app.core.config import generator
 
 
 def generate_password(text: str, key: str = '', context: str = '') -> None:
     generator.text = text
     if key != '':
-        generator.key_str = key
+        generator.key = key
     else:
-        key = generator.key_str
+        key = generator.key
     password = generator.generate_password()
     interface.display_password(password, text, key, context)
     interface.copy_to_clipboard(password)
@@ -25,8 +25,7 @@ def update_password(text: str, key: str, context: str) -> None:
     interface.display_password(password, text, key, context)
     interface.copy_to_clipboard(password)
     history.add_to_history(password, text, key, context)
-    logger.log_info(f"password updated successfully")
-    logger.log_info(f"password saved on history")
+    logger.log_info(f"password updated successfully and saved on history")
 
 
 def delete_password(context: str) -> None:

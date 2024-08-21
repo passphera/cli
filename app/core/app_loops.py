@@ -1,6 +1,6 @@
 import typer
 
-from core.helpers import interface, functions
+from app.core import interface, functions
 
 
 def main_loop() -> None:
@@ -14,6 +14,8 @@ def main_loop() -> None:
             settings_loop()
         case 3:
             history_loop()
+        case 4:
+            authentication_loop()
 
 
 def passwords_loop() -> None:
@@ -81,3 +83,18 @@ def history_loop() -> None:
             functions.encrypt_history()
         case 8:
             functions.decrypt_history()
+
+
+def authentication_loop() -> None:
+    choice = interface.display_auth_menu()
+    match choice:
+        case 0:
+            raise typer.Exit()
+        case 1:
+            main_loop()
+        case 2:
+            pass
+        case 3:
+            pass
+        case 4:
+            pass

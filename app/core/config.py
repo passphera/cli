@@ -6,19 +6,23 @@ import typer
 
 from passphera_core import PasswordGenerator
 
-from core.backend import history, logger, settings
+from app.backend import history, logger
+from app.core import settings
 
-__version__: str = '0.11.0'
+__version__: str = '0.12.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
 __status__: str = 'Development'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 
-__default_algorithm__: str = "playfair"
 __default_shift__: str = "3"
 __default_multiplier__: str = "3"
+__default_key__: str = "hill"
+__default_algorithm__: str = "hill"
 __default_encrypted__: str = "false"
+
+ENDPOINT: str = "http://0.0.0.0:8000/api/v1"
 
 
 def setup_xdg_variables() -> None:
@@ -38,6 +42,11 @@ def setup_xdg_variables() -> None:
 
 def setup_paths(platform_name) -> dict[str, str]:
     paths: dict[str, dict[str, str]] = {
+        "Linux": {
+            "cache": os.path.join(os.path.expandvars("$XDG_CACHE_HOME"), "passphera", "cli"),
+            "config": os.path.join(os.path.expandvars("$XDG_CONFIG_HOME"), "passphera", "cli"),
+            "data": os.path.join(os.path.expandvars("$XDG_DATA_HOME"), "passphera", "cli"),
+        },
         "Windows": {
             "cache": os.path.expanduser(os.path.join("~", ".passphera", "cli")),
             "config": os.path.expanduser(os.path.join("~", ".passphera", "cli")),
@@ -48,11 +57,6 @@ def setup_paths(platform_name) -> dict[str, str]:
             "config": os.path.expanduser(os.path.join("~", "Library", "Application Support", "passphera", "cli")),
             "data": os.path.expanduser(os.path.join("~", "Library", "Application Support", "passphera", "cli")),
         },
-        "Linux": {
-            "cache": os.path.join(os.path.expandvars("$XDG_CACHE_HOME"), "passphera", "cli"),
-            "config": os.path.join(os.path.expandvars("$XDG_CONFIG_HOME"), "passphera", "cli"),
-            "data": os.path.join(os.path.expandvars("$XDG_DATA_HOME"), "passphera", "cli"),
-        }
     }
     if platform_name not in paths:
         raise Exception("Unsupported platform")
@@ -89,22 +93,22 @@ def _init_files() -> None:
 def _init_settings() -> None:
     if settings.get_key(settings.__encryption_method__, settings.__algorithm__) is None:
         settings.set_key(settings.__encryption_method__, settings.__algorithm__, __default_algorithm__)
-        settings.save_settings()
     if settings.get_key(settings.__encryption_method__, settings.__shift__) is None:
         settings.set_key(settings.__encryption_method__, settings.__shift__, __default_shift__)
-        settings.save_settings()
     if settings.get_key(settings.__encryption_method__, settings.__multiplier__) is None:
         settings.set_key(settings.__encryption_method__, settings.__multiplier__, __default_multiplier__)
-        settings.save_settings()
+    if settings.get_key(settings.__encryption_method__, settings.__key__) is None:
+        settings.set_key(settings.__encryption_method__, settings.__key__, __default_key__)
     if settings.get_key(settings.__history__, settings.__encrypted__) is None:
         settings.set_key(settings.__history__, settings.__encrypted__, __default_encrypted__)
-        settings.save_settings()
+    settings.save_settings()
 
 
 def _init_generator() -> None:
     generator.algorithm = settings.get_key(settings.__encryption_method__, settings.__algorithm__)
     generator.shift = int(settings.get_key(settings.__encryption_method__, settings.__shift__))
     generator.multiplier = int(settings.get_key(settings.__encryption_method__, settings.__multiplier__))
+    generator.key = settings.get_key(settings.__encryption_method__, settings.__key__)
     for key, value in settings.get_settings(settings.__characters_replacements__).items():
         generator.replace_character(key, value)
 
