@@ -1,39 +1,36 @@
-from app.backend import history, logger
-from app.core import interface
+import requests
+
+from app.backend import auth, history
+from app.core import config
 from app.core.config import generator
 
 
-def generate_password(text: str, key: str = '', context: str = '') -> None:
+def generate_password(text: str, key: str = '', context: str = '') -> str:
     generator.text = text
     if key != '':
         generator.key = key
-    else:
-        key = generator.key
-    password = generator.generate_password()
-    interface.display_password(password, text, key, context)
-    interface.copy_to_clipboard(password)
-    logger.log_info("new password generated successfully")
-    if context != '':
-        history.add_to_history(password, text, key, context)
-        logger.log_info(f"new passwords saved using this context '{context}'")
+    if auth.is_authenticated() and context != '':
+        data = {
+            "text": text,
+            "context": context,
+        }
+        response = requests.post(f"{config.ENDPOINT}/passwords", json=data, headers=auth.get_auth_header())
+        if response.status_code != 201:
+            raise Exception(response.text)
+        return response.json()['password']
+    return generator.generate_password()
 
 
-def update_password(text: str, key: str, context: str) -> None:
+def update_password(text: str, key: str, context: str) -> str:
     generator.text = text
     generator.key_str = key
     password = generator.generate_password()
-    interface.display_password(password, text, key, context)
-    interface.copy_to_clipboard(password)
     history.add_to_history(password, text, key, context)
-    logger.log_info(f"password updated successfully and saved on history")
+    return password
 
 
-def delete_password(context: str) -> None:
+def delete_password(context: str) -> dict[str, str]:
     entry: dict[str, str] | None = history.get_password(context)
-    if history.remove_password(context):
-        interface.display_password_removed_message()
-        interface.display_password(entry['text'], entry['key'], entry['password'], entry['context'])
-        logger.log_warning("saved password was removed")
-    else:
-        interface.display_context_error_message(context)
-        logger.log_error(f"entered unsaved password context '{context}'")
+    if not history.remove_password(context):
+        raise Exception
+    return entry

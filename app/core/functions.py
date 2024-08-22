@@ -2,8 +2,8 @@ import typer
 
 from passphera_core import InvalidAlgorithmException
 
-from app.backend import history, logger, settings, passwords
-from app.core import interface
+from app.backend import history, settings, passwords
+from app.core import interface, logger
 from app.core.config import generator
 
 

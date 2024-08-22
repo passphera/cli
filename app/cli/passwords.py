@@ -3,8 +3,8 @@ from typing import Annotated, Optional
 import typer
 from rich.prompt import Prompt
 
-from app.backend import history, logger, passwords
-from app.core import interface
+from app.backend import history, passwords
+from app.core import interface, logger
 from app.core.app_loops import passwords_loop
 
 
@@ -28,11 +28,21 @@ def generate(
         context: Annotated[Optional[str], typer.Option("-c", "--context")] = ''
 ) -> None:
     """Generate new password (and optionally save it)"""
-    if not key:
-        key = Prompt.ask("Enter the key (leave blank for default)", default=generator.key, show_default=False)
-    if not context:
-        context = Prompt.ask("Enter a context if you want to save the password")
-    passwords.generate_password(text, key, context)
+    try:
+        if not key:
+            key = Prompt.ask("Enter the key (leave blank for default)", show_default=False)
+        if not context:
+            context = Prompt.ask("Enter a context if you want to save the password")
+        password: str = passwords.generate_password(text, key)
+        interface.display_password(password, text, key, context)
+        interface.copy_to_clipboard(password)
+        logger.log_info("new password generated successfully")
+        if context != '':
+            history.add_to_history(password, text, key, context)
+            logger.log_info(f"new passwords saved using this context '{context}'")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 @app.command()
@@ -51,7 +61,10 @@ def update(
             text = typer.prompt("Enter the text to encrypt (leave blank for old one)", default=entry['text'])
         if not key:
             key = typer.prompt("Enter the key (leave blank for default)", default=entry['key'])
-        passwords.update_password(text, key, context)
+        password = passwords.update_password(text, key, context)
+        interface.display_password(password, text, key, context)
+        interface.copy_to_clipboard(password)
+        logger.log_info(f"password updated successfully and saved on history")
         return
     interface.display_context_error_message(context)
     logger.log_error(f"entered unsaved password context {context}")
@@ -60,7 +73,14 @@ def update(
 @app.command()
 def delete(context: Annotated[str, typer.Argument(help="The context you want to update the password for")],) -> None:
     """Delete a saved password"""
-    passwords.delete_password(context)
+    try:
+        entry = passwords.delete_password(context)
+        interface.display_password_removed_message()
+        interface.display_password(entry['text'], entry['key'], entry['password'], entry['context'])
+        logger.log_warning("saved password was removed")
+    except Exception as e:
+        interface.display_context_error_message(context)
+        logger.log_error(f"entered unsaved password context '{context}'")
 
 
 if __name__ == "__main__":

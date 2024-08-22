@@ -3,6 +3,7 @@ from typing import Annotated
 import typer
 
 from app.backend import auth
+from app.core import interface, logger
 from app.core.app_loops import authentication_loop
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -30,8 +31,11 @@ def signup(
     """Register new user on the app server"""
     try:
         auth.signup(email, username, password)
+        interface.display_message("user registered successfully")
+        logger.log_info("registered new user in the app server")
     except Exception as e:
-        print(e)
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 @app.command()
@@ -42,8 +46,11 @@ def login(
     """Login to the app server"""
     try:
         auth.login(email, password)
+        interface.display_message("logged in successfully")
+        logger.log_info(f"logged in with user email {email}")
     except Exception as e:
-        print(e)
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 @app.command()
@@ -51,5 +58,12 @@ def logout() -> None:
     """Logout from the app server"""
     try:
         auth.logout()
+        interface.display_message("logged out successfully")
+        logger.log_info("user logged out")
     except Exception as e:
-        print(e)
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+if __name__ == "__main__":
+    app()

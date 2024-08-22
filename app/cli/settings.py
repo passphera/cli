@@ -1,10 +1,9 @@
 from typing import Annotated
 
 import typer
-from passphera_core import InvalidAlgorithmException
 
-from app.backend import logger
-from app.core import config, interface, settings
+from app.backend import settings
+from app.core import interface, logger
 from app.core.app_loops import settings_loop
 
 
@@ -23,24 +22,22 @@ def settings_callback(ctx: typer.Context) -> None:
 
 @app.command()
 def algorithm(
-        name: Annotated[str, typer.Argument(help="Primary algorithm name")],
+        algorithm_name: Annotated[str, typer.Argument(help="Primary algorithm name")],
 ) -> None:
     """Change ciphering primary algorithm setting"""
     try:
-        config.generator.algorithm = name
-        settings.set_key(settings.__encryption_method__, settings.__algorithm__, name)
-        interface.display_message(f"Primary Algorithm has been changed to {name}")
-        logger.log_info(f"Primary Algorithm has been changed to {name}")
-    except InvalidAlgorithmException:
-        interface.display_error(f"Invalid algorithm name: {name}")
-        logger.log_error(f"Failed to change primary algorithm to {name}")
+        settings.change_algorithm(algorithm_name)
+        interface.display_message(f"Primary Algorithm has been changed to {algorithm_name}")
+        logger.log_info(f"Primary Algorithm has been changed to {algorithm_name}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change primary algorithm to {algorithm_name}")
 
 
 @app.command()
-def reset_algo() -> None:
+def reset_algorithm() -> None:
     """Reset ciphering primary algorithm setting to default"""
-    config.generator.algorithm = config.__default_algorithm__
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.__default_algorithm__)
+    settings.reset_algorithm()
     interface.display_message("Primary Algorithm has been changed to default")
     logger.log_info("Primary Algorithm has been changed to default")
 
@@ -50,8 +47,7 @@ def shift(
         amount: Annotated[int, typer.Argument(help="The amount to shift to")],
 ) -> None:
     """Change ciphering shift setting"""
-    config.generator.shift = amount
-    settings.set_key(settings.__encryption_method__, settings.__shift__, str(amount))
+    settings.change_shift(amount)
     interface.display_message(f"Shift has been changed to {amount}")
     logger.log_info(f"Shift has been changed to {amount}")
 
@@ -59,8 +55,7 @@ def shift(
 @app.command()
 def reset_shift() -> None:
     """Reset ciphering shift setting to default value"""
-    config.generator.shift = config.__default_shift__
-    settings.set_key(settings.__encryption_method__, settings.__shift__, config.__default_shift__)
+    settings.reset_shift()
     interface.display_message("Shift has been changed to default")
     logger.log_info("Shift has been changed to default")
 
@@ -70,8 +65,7 @@ def multiplier(
         value: Annotated[int, typer.Argument(help="The value to multiply by")],
 ) -> None:
     """Change ciphering multiplier setting"""
-    config.generator.multiplier = value
-    settings.set_key(settings.__encryption_method__, settings.__multiplier__, str(value))
+    settings.change_multiplier(value)
     interface.display_message(f"Multiplier has been changed to {value}")
     logger.log_info(f"Multiplier has been changed to {value}")
 
@@ -79,8 +73,7 @@ def multiplier(
 @app.command()
 def reset_mul() -> None:
     """Reset ciphering multiplier setting to default value"""
-    config.generator.shift = config.__default_multiplier__
-    settings.set_key(settings.__encryption_method__, settings.__multiplier__, config.__default_multiplier__)
+    settings.reset_multiplier()
     interface.display_message("Multiplier has been changed to default")
     logger.log_info("Multiplier has been changed to default")
 
@@ -90,8 +83,7 @@ def key(
         new_key: Annotated[str, typer.Argument(help="The key to use in encryption")]
 ) -> None:
     """Change ciphering key setting"""
-    config.generator.key = new_key
-    settings.set_key(settings.__encryption_method__, settings.__key__, new_key)
+    settings.change_cipher_key(new_key)
     interface.display_message(f"Multiplier has been changed to {new_key}")
     logger.log_info(f"Changed key to {new_key}")
 
@@ -99,8 +91,7 @@ def key(
 @app.command()
 def reset_key() -> None:
     """Reset ciphering key setting to default value"""
-    config.generator.key = config.__default_key__
-    settings.set_key(settings.__encryption_method__, settings.__key__, config.__default_key__)
+    settings.reset_cipher_key()
     interface.display_message("Key has been changed to default")
     logger.log_info("Key has been changed to default")
 
@@ -113,10 +104,7 @@ def replace_char(
 ) -> None:
     """Replace character with a replacement string"""
     try:
-        if replacement in ['`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', '\'', '"', '|', '\\']:
-            raise ValueError
-        config.generator.replace_character(character, replacement)
-        settings.set_key(settings.__characters_replacements__, character, replacement)
+        settings.replace_character(character, replacement)
         interface.display_message(f"Character {character} has been replaced with {replacement}")
         logger.log_info(f"Character {character} has been replaced with {replacement}")
     except ValueError:
@@ -129,8 +117,7 @@ def reset_rep(
         character: Annotated[str, typer.Argument(help="Character to reset it")]
 ) -> None:
     """reset a character's replacement"""
-    config.generator.reset_character(character)
-    settings.set_key(settings.__characters_replacements__, character, character)
+    settings.reset_replacement(character)
     interface.display_message(f"Character {character}'s replacement has been removed")
     logger.log_info(f"Character {character}'s replacement has been removed")
 
@@ -140,7 +127,7 @@ def show_rep(
         character: Annotated[str, typer.Argument(help="Character to reset it")]
 ) -> None:
     """Show a specific character's replacement string"""
-    replacement: str | None = settings.get_key(settings.__characters_replacements__, character)
+    replacement: str | None = settings.show_character_replacement(character)
     if replacement is not None:
         interface.display_character_replacement(character, replacement)
     else:
@@ -150,7 +137,7 @@ def show_rep(
 @app.command()
 def all_reps() -> None:
     """Show all character's replacement strings"""
-    replacements: dict[str, str] = settings.get_settings(settings.__characters_replacements__)
+    replacements: dict[str, str] = settings.show_all_characters_replacements()
     interface.display_character_replacements(replacements)
 
 
