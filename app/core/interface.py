@@ -34,6 +34,16 @@ def display_main_menu() -> int:
     return _display_menu(prompt, choices, "passphera CLI Main Menu")
 
 
+def display_auth_menu() -> int:
+    prompt = """1. Back
+2. Login with email and password
+3. Logout
+4. Register new user
+0. Exit"""
+    choices = [0, 1, 2, 3, 4]
+    return _display_menu(prompt, choices, "passphera CLI Authentication Menu")
+
+
 def display_passwords_menu() -> int:
     prompt = """1.  Back
 2.  Generate new password
@@ -75,24 +85,14 @@ def display_history_menu() -> int:
     return _display_menu(prompt, choices, "passphera CLI History Menu")
 
 
-def display_auth_menu() -> int:
-    prompt = """1. Back
-2. Login with email and password
-3. Logout
-4. Register new user
-0. Exit"""
-    choices = [0, 1, 2, 3, 4]
-    return _display_menu(prompt, choices, "passphera CLI Authentication Menu")
-
-
-def display_password(password: dict[str, str] | str, text: str = '', key: str = '', context: str = '') -> None:
-    table: Table = Table("context", "text", "key", "password", show_header=True, header_style="bold magenta",
+def display_password(password: dict[str, str] | str, text: str = '', context: str = '') -> None:
+    table: Table = Table("context", "text", "password", show_header=True, header_style="bold magenta",
                          border_style="blue")
     if type(password) is dict:
-        table.add_row(password['context'], password['text'], password['key'], password['password'])
+        table.add_row(password['context'], password['text'], password['password'])
         _display_panel(table)
     else:
-        table.add_row(context, text, key, password)
+        table.add_row(context, text, password)
         _display_panel(table)
 
 

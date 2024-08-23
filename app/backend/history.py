@@ -31,13 +31,13 @@ def save_history() -> None:
             json.dump(__history__, f, indent=4)
 
 
-def add_to_history(password: str, text: str, key: str, context: str) -> None:
+def add_to_history(context: str, text: str, password: str) -> None:
     entry = {
         "context": context,
         "text": text,
-        "key": key,
         "password": password,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
     existing_entry = get_password(context)
     if existing_entry is not None:
@@ -58,8 +58,8 @@ def update_password(password: dict[str, str]) -> None:
     for entry in __history__:
         if entry["context"] == password["context"]:
             entry["text"] = password['text']
-            entry["key"] = password["key"]
             entry["password"] = password["password"]
+            entry["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     save_history()
 
 

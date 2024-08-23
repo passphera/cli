@@ -6,7 +6,7 @@ from rich.prompt import Prompt
 from app.backend import history, passwords
 from app.core import interface, logger
 from app.core.app_loops import passwords_loop
-
+from app.core.config import generator
 
 app = typer.Typer(rich_markup_mode="rich")
 
@@ -24,21 +24,17 @@ def passwords_callback(ctx: typer.Context) -> None:
 @app.command()
 def generate(
         text: Annotated[str, typer.Option("-t", "--text", prompt="Enter the text to encrypt")],
-        key: Annotated[Optional[str], typer.Option("-k", "--key")] = '',
         context: Annotated[Optional[str], typer.Option("-c", "--context")] = ''
 ) -> None:
     """Generate new password (and optionally save it)"""
     try:
-        if not key:
-            key = Prompt.ask("Enter the key (leave blank for default)", show_default=False)
         if not context:
             context = Prompt.ask("Enter a context if you want to save the password")
-        password: str = passwords.generate_password(text, key)
-        interface.display_password(password, text, key, context)
+        password: str = passwords.generate_password(text)
+        interface.display_password(password, text, context)
         interface.copy_to_clipboard(password)
         logger.log_info("new password generated successfully")
         if context != '':
-            history.add_to_history(password, text, key, context)
             logger.log_info(f"new passwords saved using this context '{context}'")
     except Exception as e:
         interface.display_error(f"{e}")
@@ -51,18 +47,14 @@ def update(
                                                show_default=False)],
         text: Annotated[str, typer.Option("-t", "--text",
                                           help="The text to encrypt [old one if blank]")] = '',
-        key: Annotated[Optional[str], typer.Option("-k", "--key",
-                                                   help="The key to use on encryption [old one if blank]")] = '',
 ) -> None:
     """Update a saved password"""
     entry: dict[str, str] | None = history.get_password(context)
     if entry is not None:
         if not text:
-            text = typer.prompt("Enter the text to encrypt (leave blank for old one)", default=entry['text'])
-        if not key:
-            key = typer.prompt("Enter the key (leave blank for default)", default=entry['key'])
-        password = passwords.update_password(text, key, context)
-        interface.display_password(password, text, key, context)
+            text = Prompt.ask("Enter the text to encrypt (leave blank for old one)", default=entry['text'])
+        password = passwords.update_password(context, text)
+        interface.display_password(password, text, context)
         interface.copy_to_clipboard(password)
         logger.log_info(f"password updated successfully and saved on history")
         return
@@ -76,8 +68,8 @@ def delete(context: Annotated[str, typer.Argument(help="The context you want to 
     try:
         entry = passwords.delete_password(context)
         interface.display_password_removed_message()
-        interface.display_password(entry['text'], entry['key'], entry['password'], entry['context'])
-        logger.log_warning("saved password was removed")
+        interface.display_password(entry['context'], entry['text'], entry['password'])
+        logger.log_warning("saved password was removed from database")
     except Exception as e:
         interface.display_context_error_message(context)
         logger.log_error(f"entered unsaved password context '{context}'")
