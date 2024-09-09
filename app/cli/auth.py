@@ -65,5 +65,18 @@ def logout() -> None:
         logger.log_error(f"{e}")
 
 
+@app.command()
+def whoami() -> None:
+    """Get user credentials"""
+    try:
+        user = auth.get_auth_user()
+        header = auth.get_auth_header()
+        print(header)
+        print(user)
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
 if __name__ == "__main__":
     app()

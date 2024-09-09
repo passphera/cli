@@ -16,11 +16,11 @@ __url__: str = 'https://github.com/passphera/cli'
 __status__: str = 'Development'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 
-__default_shift__: str = "3"
-__default_multiplier__: str = "3"
-__default_key__: str = "hill"
-__default_algorithm__: str = "hill"
-__default_encrypted__: str = "false"
+DEFAULT_SHIFT: str = "3"
+DEFAULT_MULTIPLIER: str = "3"
+DEFAULT_KEY: str = "hill"
+DEFAULT_ALGORITHM: str = "hill"
+DEFAULT_ENCRYPTED: str = "false"
 
 ENDPOINT: str = "http://0.0.0.0:8000/api/v1"
 
@@ -92,15 +92,15 @@ def _init_files() -> None:
 
 def _init_settings() -> None:
     if settings.get_key(settings.__encryption_method__, settings.__algorithm__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__algorithm__, __default_algorithm__)
+        settings.set_key(settings.__encryption_method__, settings.__algorithm__, DEFAULT_ALGORITHM)
     if settings.get_key(settings.__encryption_method__, settings.__shift__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__shift__, __default_shift__)
+        settings.set_key(settings.__encryption_method__, settings.__shift__, DEFAULT_SHIFT)
     if settings.get_key(settings.__encryption_method__, settings.__multiplier__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__multiplier__, __default_multiplier__)
+        settings.set_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER)
     if settings.get_key(settings.__encryption_method__, settings.__key__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__key__, __default_key__)
+        settings.set_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
     if settings.get_key(settings.__history__, settings.__encrypted__) is None:
-        settings.set_key(settings.__history__, settings.__encrypted__, __default_encrypted__)
+        settings.set_key(settings.__history__, settings.__encrypted__, DEFAULT_ENCRYPTED)
     settings.save_settings()
 
 

@@ -46,4 +46,14 @@ def logout() -> None:
 def get_auth_header() -> dict[str, str]:
     if not is_authenticated():
         raise Exception("Not logged in")
-    return {'Authorization': f'Bearer {settings.get_key(settings.__auth__, settings.__access_token__)}'}
+    return {
+        'accept': 'application/json',
+        'Authorization': f'Bearer {settings.get_key(settings.__auth__, settings.__access_token__)}',
+    }
+
+
+def get_auth_user() -> dict[str, str]:
+    if not is_authenticated():
+        raise Exception("Not logged in")
+    user = requests.get(f"{config.ENDPOINT}/users/me", headers=get_auth_header()).json()
+    return user

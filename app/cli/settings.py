@@ -47,9 +47,13 @@ def shift(
         amount: Annotated[int, typer.Argument(help="The amount to shift to")],
 ) -> None:
     """Change ciphering shift setting"""
-    settings.change_shift(amount)
-    interface.display_message(f"Shift has been changed to {amount}")
-    logger.log_info(f"Shift has been changed to {amount}")
+    try:
+        settings.change_shift(amount)
+        interface.display_message(f"Shift has been changed to {amount}")
+        logger.log_info(f"Shift has been changed to {amount}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change shift to {amount}")
 
 
 @app.command()
@@ -65,9 +69,13 @@ def multiplier(
         value: Annotated[int, typer.Argument(help="The value to multiply by")],
 ) -> None:
     """Change ciphering multiplier setting"""
-    settings.change_multiplier(value)
-    interface.display_message(f"Multiplier has been changed to {value}")
-    logger.log_info(f"Multiplier has been changed to {value}")
+    try:
+        settings.change_multiplier(value)
+        interface.display_message(f"Multiplier has been changed to {value}")
+        logger.log_info(f"Multiplier has been changed to {value}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change multiplier to {value}")
 
 
 @app.command()
@@ -83,9 +91,13 @@ def key(
         new_key: Annotated[str, typer.Argument(help="The key to use in encryption")]
 ) -> None:
     """Change ciphering key setting"""
-    settings.change_cipher_key(new_key)
-    interface.display_message(f"Multiplier has been changed to {new_key}")
-    logger.log_info(f"Changed key to {new_key}")
+    try:
+        settings.change_cipher_key(new_key)
+        interface.display_message(f"Multiplier has been changed to {new_key}")
+        logger.log_info(f"Changed key to {new_key}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change key to {new_key}")
 
 
 @app.command()
@@ -110,6 +122,8 @@ def replace_char(
     except ValueError:
         interface.display_replacement_error_message(replacement)
         logger.log_error(f"failed to replace character '{character}' with '{replacement}'")
+    except Exception as e:
+        interface.display_error(f"{e}")
 
 
 @app.command()
@@ -117,9 +131,12 @@ def reset_rep(
         character: Annotated[str, typer.Argument(help="Character to reset it")]
 ) -> None:
     """reset a character's replacement"""
-    settings.reset_replacement(character)
-    interface.display_message(f"Character {character}'s replacement has been removed")
-    logger.log_info(f"Character {character}'s replacement has been removed")
+    try:
+        settings.reset_replacement(character)
+        interface.display_message(f"Character {character}'s replacement has been removed")
+        logger.log_info(f"Character {character}'s replacement has been removed")
+    except Exception as e:
+        interface.display_error(f"{e}")
 
 
 @app.command()
