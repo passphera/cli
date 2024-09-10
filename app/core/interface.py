@@ -26,11 +26,12 @@ def _display_menu(prompt: str, choices: list[int], title: str) -> int:
 
 
 def display_main_menu() -> int:
-    prompt = """1. Manage Passwords
-2. Manage Settings
-3. Manage History
+    prompt = """1. Authentication
+2. Passwords
+3. Settings
+4. Database
 0. Exit"""
-    choices = [0, 1, 2, 3]
+    choices = [0, 1, 2, 3, 4]
     return _display_menu(prompt, choices, "passphera CLI Main Menu")
 
 
@@ -39,16 +40,17 @@ def display_auth_menu() -> int:
 2. Login with email and password
 3. Logout
 4. Register new user
+5. My information
 0. Exit"""
-    choices = [0, 1, 2, 3, 4]
+    choices = [0, 1, 2, 3, 4, 5]
     return _display_menu(prompt, choices, "passphera CLI Authentication Menu")
 
 
 def display_passwords_menu() -> int:
     prompt = """1.  Back
 2.  Generate new password
-3.  Update saved password on history
-4.  Remove saved password from history
+3.  Update saved password
+4.  Delete saved password
 0.  Exit"""
     choices = [0, 1, 2, 3, 4]
     return _display_menu(prompt, choices, "passphera CLI Passwords Menu")
@@ -56,33 +58,38 @@ def display_passwords_menu() -> int:
 
 def display_settings_menu() -> int:
     prompt = """1.  Back
-2.  Change the primary algorithm
-3.  Reset the primary algorithm to default
-4.  Change multiplier
-5.  Reset the multiplier to default
-6.  Change the shift of the encryption
-7.  Reset the shift to its default value
-8.  Replace an alphabet character with a set of custom characters
-9.  Reset an alphabet character replacement to it's default
-10. Show a specific character replacement
-11. Show all characters replacements
+2.  Change cipher algorithm
+3.  Reset cipher algorithm to default value
+4.  Change cipher shift
+5.  Reset cipher shift to default value
+6.  Change cipher multiplier
+7.  Reset cipher multiplier to default value
+8.  Change cipher key
+9.  Reset cipher key to default value
+10. Replace an alphabet character with a set of custom characters
+11. Reset an alphabet character replacement to default value
+12. Show characters replacements
 0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     return _display_menu(prompt, choices, "passphera CLI Settings Menu")
 
 
 def display_history_menu() -> int:
     prompt = """1.  Back
-2.  Retrieve saved password from history
+2.  Get saved password
 3.  Show all saved passwords
-4.  Clear history
-5.  Back up history into backup file
-6.  Load history from a back up from backup file
-7.  Encrypt passwords on history file
-8.  Decrypt passwords on history file
+4.  Clear database
+5.  Sync with shared database
 0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    choices = [0, 1, 2, 3, 4, 5]
     return _display_menu(prompt, choices, "passphera CLI History Menu")
+
+
+def display_user_info(user: dict[str, str]) -> None:
+    info = f"""Username: {user.get('username')}
+Email: {user.get('email')}
+ID: {user.get('id')}"""
+    _display_panel(info, "User Information")
 
 
 def display_password(password: dict[str, str] | str, text: str = '', context: str = '') -> None:

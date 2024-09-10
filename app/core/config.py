@@ -9,7 +9,8 @@ from passphera_core import PasswordGenerator
 from app.backend import history
 from app.core import settings, logger
 
-__version__: str = '0.14.0'
+
+__version__: str = '0.15.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -99,8 +100,8 @@ def _init_settings() -> None:
         settings.set_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER)
     if settings.get_key(settings.__encryption_method__, settings.__key__) is None:
         settings.set_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
-    if settings.get_key(settings.__history__, settings.__encrypted__) is None:
-        settings.set_key(settings.__history__, settings.__encrypted__, DEFAULT_ENCRYPTED)
+    if settings.get_key(settings.HISTORY, settings.__encrypted__) is None:
+        settings.set_key(settings.HISTORY, settings.__encrypted__, DEFAULT_ENCRYPTED)
     settings.save_settings()
 
 

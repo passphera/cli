@@ -2,8 +2,7 @@ from typing import Annotated
 
 import typer
 
-from app.backend import history
-from app.core import interface
+from app.core import functions
 from app.core.app_loops import history_loop
 
 
@@ -22,46 +21,26 @@ def history_callback(ctx: typer.Context) -> None:
 
 @app.command()
 def get(context: Annotated[str, typer.Argument(help="The context to get it's password")]) -> None:
-    """Get a saved password from history"""
-    password: dict[str, str] = history.get_password(context)
-    if password is not None:
-        interface.display_password(password)
-    else:
-        interface.display_context_error_message(context)
-    interface.copy_to_clipboard(password['password'])
+    """Get saved password"""
+    functions.get_password(context)
 
 
 @app.command()
-def show_all() -> None:
-    """Show all saved passwords"""
-    interface.display_passwords(history.__history__)
+def get_all() -> None:
+    """Get all saved passwords"""
+    functions.get_all_passwords()
 
 
 @app.command()
 def clear() -> None:
     """Clear history from all saved passwords"""
-    history.clear_history()
-    interface.display_clear_history_message()
+    functions.clear_database()
 
 
 @app.command()
-def save_backup() -> None:
-    """Save backup history"""
-
-
-@app.command()
-def load_backup() -> None:
-    """Load history from a saved backup"""
-
-
-@app.command()
-def encrypt() -> None:
-    """Encrypt passwords on history"""
-
-
-@app.command()
-def decrypt() -> None:
-    """Decrypt passwords on history"""
+def sync() -> None:
+    """Sync with shared database"""
+    functions.sync()
 
 
 if __name__ == "__main__":

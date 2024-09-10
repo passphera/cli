@@ -7,23 +7,6 @@ def is_authenticated() -> bool:
     return settings.get_key(settings.__auth__, settings.__access_token__) is not None
 
 
-def signup(email: str, username: str, password: str) -> None:
-    if is_authenticated():
-        raise Exception("Cannot create new user while logged in")
-    data = {
-        "email": email,
-        "username": username,
-        "password": password,
-        "re_password": password,
-    }
-    response = requests.post(f"{config.ENDPOINT}/auth/sign-up", json=data)
-    if response.status_code == 400:
-        if response.json().get("detail") == "Email already registered":
-            raise Exception("Email already registered")
-        elif response.json().get("detail") == "Username already registered":
-            raise Exception("Username already registered")
-
-
 def login(email: str, password: str) -> None:
     if is_authenticated():
         raise Exception("Already logged in")
@@ -43,6 +26,23 @@ def logout() -> None:
     settings.delete_key(settings.__auth__, settings.__access_token__)
 
 
+def signup(email: str, username: str, password: str) -> None:
+    if is_authenticated():
+        raise Exception("Cannot create new user while logged in")
+    data = {
+        "email": email,
+        "username": username,
+        "password": password,
+        "re_password": password,
+    }
+    response = requests.post(f"{config.ENDPOINT}/auth/sign-up", json=data)
+    if response.status_code == 400:
+        if response.json().get("detail") == "Email already registered":
+            raise Exception("Email already registered")
+        elif response.json().get("detail") == "Username already registered":
+            raise Exception("Username already registered")
+
+
 def get_auth_header() -> dict[str, str]:
     if not is_authenticated():
         raise Exception("Not logged in")
@@ -55,5 +55,5 @@ def get_auth_header() -> dict[str, str]:
 def get_auth_user() -> dict[str, str]:
     if not is_authenticated():
         raise Exception("Not logged in")
-    user = requests.get(f"{config.ENDPOINT}/users/me", headers=get_auth_header()).json()
-    return user
+    user = requests.get(f"{config.ENDPOINT}/auth/users/me", headers=get_auth_header())
+    return user.json()

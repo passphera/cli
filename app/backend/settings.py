@@ -105,7 +105,7 @@ def reset_multiplier() -> None:
     settings.set_key(settings.__encryption_method__, settings.__multiplier__, config.DEFAULT_MULTIPLIER)
 
 
-def change_cipher_key(new_key: str) -> None:
+def change_key(new_key: str) -> None:
     if auth.is_authenticated():
         data = {
             'key': new_key
@@ -121,7 +121,7 @@ def change_cipher_key(new_key: str) -> None:
     settings.set_key(settings.__encryption_method__, settings.__key__, new_key)
 
 
-def reset_cipher_key() -> None:
+def reset_key() -> None:
     if auth.is_authenticated():
         data = {
             'key': config.DEFAULT_KEY
@@ -170,15 +170,6 @@ def reset_replacement(character: str) -> None:
             raise Exception(response.text)
     config.generator.reset_character(character)
     settings.set_key(settings.__characters_replacements__, character, character)
-
-
-def show_character_replacement(character: str) -> str | None:
-    if auth.is_authenticated():
-        response = requests.get(f"{config.ENDPOINT}/generators/", headers=auth.get_auth_header())
-        if response.status_code != 200:
-            raise Exception(response.text)
-        return response.json()['characters_replacements'].get(character)
-    return settings.get_key(settings.__characters_replacements__, character)
 
 
 def show_all_characters_replacements() -> dict[str, str]:

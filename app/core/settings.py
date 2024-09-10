@@ -2,12 +2,12 @@ import os
 from configparser import ConfigParser
 
 
-__file__: str | None = None
+FILE: str | None = None
 
 # sections
 __characters_replacements__: str = "Characters Replacements"
 __encryption_method__: str = "Encryption Method"
-__history__: str = "History"
+HISTORY: str = "History"
 __auth__: str = "Authentication"
 
 # keys
@@ -23,18 +23,18 @@ __config: ConfigParser = ConfigParser()
 
 
 def configure(path: str) -> None:
-    global __file__
-    __file__ = os.path.join(path)
+    global FILE
+    FILE = os.path.join(path)
     load_settings()
 
 
 def load_settings() -> None:
-    if __file__ and os.path.exists(__file__):
-        __config.read(__file__)
+    if FILE and os.path.exists(FILE):
+        __config.read(FILE)
 
 
 def save_settings() -> None:
-    with open(__file__, 'w') as configfile:
+    with open(FILE, 'w') as configfile:
         __config.write(configfile)
 
 
