@@ -2,7 +2,6 @@ from typing import Annotated
 
 import typer
 
-from app.backend import settings
 from app.core import functions
 from app.core.app_loops import settings_loop
 

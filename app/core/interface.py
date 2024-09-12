@@ -22,7 +22,7 @@ def _display_menu(prompt: str, choices: list[int], title: str) -> int:
                 return choice
             console.print(f"[yellow]Invalid choice. Please select from 0 to {len(choices) - 1}.")
         except ValueError:
-            console.print(f"[red]Invalid input. Please enter a number.")
+            console.print("[red]Invalid input. Please enter a number.")
 
 
 def display_main_menu() -> int:
@@ -104,10 +104,10 @@ def display_password(password: dict[str, str] | str, text: str = '', context: st
 
 
 def display_passwords(passwords: list[dict[str, str]]):
-    table: Table = Table("text", "key", "password", "context", show_header=True, header_style="bold magenta",
+    table: Table = Table("text", "password", "context", show_header=True, header_style="bold magenta",
                          border_style="blue")
     for password in passwords:
-        table.add_row(password['text'], password['key'], password['password'], password['context'])
+        table.add_row(password['text'], password['password'], password['context'])
     _display_panel(table)
 
 
@@ -190,6 +190,6 @@ def reset_character() -> str:
 def copy_to_clipboard(password) -> None:
     try:
         pyperclip.copy(password)
-        console.print(f"[bold blue]Your password has been copied to your clipboard. Just paste it")
+        console.print("[bold blue]Your password has been copied to your clipboard. Just paste it")
     except pyperclip.PyperclipException:
-        console.print(f"[bold red]Your system doesn't have a copy/paste mechanism, try installing one (e.g., xclip)")
+        console.print("[bold red]Your system doesn't have a copy/paste mechanism, try installing one (e.g., xclip)")

@@ -12,9 +12,7 @@ app = typer.Typer(rich_markup_mode="rich")
 
 @app.callback(invoke_without_command=True)
 def passwords_callback(ctx: typer.Context) -> None:
-    """
-    Manage passwords, create, update, or delete passwords.
-    """
+    """Manage passwords, create, update, or delete passwords."""
     if ctx.invoked_subcommand is None:
         while True:
             passwords_loop()

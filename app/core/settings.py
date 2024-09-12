@@ -4,19 +4,19 @@ from configparser import ConfigParser
 
 FILE: str | None = None
 
+
 # sections
-__characters_replacements__: str = "Characters Replacements"
-__encryption_method__: str = "Encryption Method"
-HISTORY: str = "History"
 __auth__: str = "Authentication"
+__encryption_method__: str = "Encryption Method"
+__characters_replacements__: str = "Characters Replacements"
+
 
 # keys
+__access_token__: str = "access-token"
 __algorithm__: str = "primary-algorithm"
 __shift__: str = "shift-amount"
 __multiplier__: str = "multiplier-amount"
-__key__: str = "key"
-__encrypted__: str = "encrypted"
-__access_token__: str = "access-token"
+__key__: str = "cipher-key"
 
 
 __config: ConfigParser = ConfigParser()

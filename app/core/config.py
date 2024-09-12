@@ -2,15 +2,16 @@ import os
 import platform
 from datetime import datetime as dt
 
+import requests
 import typer
 
 from passphera_core import PasswordGenerator
 
-from app.backend import history
+from app.backend import auth, vault
 from app.core import settings, logger
 
 
-__version__: str = '0.15.0'
+__version__: str = '0.16.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -86,35 +87,43 @@ def _init_files() -> None:
     paths = setup_paths(platform_name)
     create_dirs(paths)
 
-    history.configure(os.path.join(paths['data'], "history.json"))
+    vault.configure(os.path.join(paths['data'], ".vault"))
     logger.configure(os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log"))
     settings.configure(os.path.join(paths['config'], "config.ini"))
 
 
-def _init_settings() -> None:
-    if settings.get_key(settings.__encryption_method__, settings.__algorithm__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__algorithm__, DEFAULT_ALGORITHM)
-    if settings.get_key(settings.__encryption_method__, settings.__shift__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__shift__, DEFAULT_SHIFT)
-    if settings.get_key(settings.__encryption_method__, settings.__multiplier__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER)
-    if settings.get_key(settings.__encryption_method__, settings.__key__) is None:
-        settings.set_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
-    if settings.get_key(settings.HISTORY, settings.__encrypted__) is None:
-        settings.set_key(settings.HISTORY, settings.__encrypted__, DEFAULT_ENCRYPTED)
-    settings.save_settings()
-
-
 def _init_generator() -> None:
-    generator.algorithm = settings.get_key(settings.__encryption_method__, settings.__algorithm__)
-    generator.shift = int(settings.get_key(settings.__encryption_method__, settings.__shift__))
-    generator.multiplier = int(settings.get_key(settings.__encryption_method__, settings.__multiplier__))
-    generator.key = settings.get_key(settings.__encryption_method__, settings.__key__)
-    for key, value in settings.get_settings(settings.__characters_replacements__).items():
-        generator.replace_character(key, value)
+    global generator
+    if auth.is_authenticated():
+        response = requests.get(f"{ENDPOINT}/generators", headers=auth.get_auth_header())
+        if response.status_code != 200:
+            raise Exception(response.text)
+        generator.algorithm = response.json().get("algorithm")
+        generator.shift = response.json().get("shift")
+        generator.multiplier = response.json().get("multiplier")
+        generator.key = response.json().get("key")
+        for key, value in response.json().get('characters_replacements', {}).items():
+            generator.replace_character(key, value)
+    else:
+        generator.algorithm = settings.get_key(settings.__encryption_method__, settings.__algorithm__, DEFAULT_ALGORITHM)
+        generator.shift = int(settings.get_key(settings.__encryption_method__, settings.__shift__, DEFAULT_SHIFT))
+        generator.multiplier = int(settings.get_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER))
+        generator.key = settings.get_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
+        for key, value in settings.get_settings(settings.__characters_replacements__).items():
+            generator.replace_character(key, value)
+
+
+def _init_settings() -> None:
+    settings.set_key(settings.__encryption_method__, settings.__algorithm__, generator.algorithm)
+    settings.set_key(settings.__encryption_method__, settings.__shift__, str(generator.shift))
+    settings.set_key(settings.__encryption_method__, settings.__multiplier__, str(generator.multiplier))
+    settings.set_key(settings.__encryption_method__, settings.__key__, generator.key)
+    for key, value in generator.characters_replacements.items():
+        settings.set_key(settings.__characters_replacements__, key, value)
+    settings.save_settings()
 
 
 def init_configurations() -> None:
     _init_files()
-    _init_settings()
     _init_generator()
+    _init_settings()

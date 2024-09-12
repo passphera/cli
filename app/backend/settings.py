@@ -1,28 +1,23 @@
 import requests
 
-from passphera_core import InvalidAlgorithmException
-
 from app.backend import auth
 from app.core import config, settings
 
 
 def change_algorithm(algorithm_name: str) -> None:
-    try:
-        if auth.is_authenticated():
-            data = {
-                'algorithm': algorithm_name
-            }
-            response = requests.patch(
-                f"{config.ENDPOINT}/generators",
-                json=data,
-                headers=auth.get_auth_header()
-            )
-            if response.status_code != 200:
-                raise Exception(response.text)
-        config.generator.algorithm = algorithm_name
-        settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm_name)
-    except InvalidAlgorithmException:
-        raise InvalidAlgorithmException(algorithm_name)
+    if auth.is_authenticated():
+        data = {
+            'algorithm': algorithm_name
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.algorithm = algorithm_name
+    settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm_name)
 
 
 def reset_algorithm() -> None:

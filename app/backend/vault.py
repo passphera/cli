@@ -1,42 +1,28 @@
-import json
 import os
 from datetime import datetime
 
 import requests
+from tinydb import TinyDB, Query
 
 from app.backend import auth
 from app.core import config
+from app.core.storage import EncryptedStorage
 
-
-HISTORY: list[dict[str, str]] = []
-FILE: str | None = None
+db: TinyDB
+Password: Query = Query()
 
 
 def configure(path: str) -> None:
-    global FILE
-    FILE = os.path.join(path)
-    load_history()
+    global db
+    # db = TinyDB(path, storage=PickleStorage)
+    # db = TinyDB(path, storage=MsgPackStorage)
+    # db = TinyDB(path, storage=CBORStorage)
+    db = TinyDB(path, storage=EncryptedStorage)
+    # db = TinyDB(path)
+    db.default_table_name = 'passwords'
 
 
-def load_history() -> None:
-    global HISTORY
-    if FILE and os.path.exists(FILE):
-        with open(FILE, "r") as f:
-            try:
-                HISTORY = json.load(f)
-            except json.JSONDecodeError:
-                HISTORY = []
-    else:
-        HISTORY = []
-
-
-def save_history() -> None:
-    if FILE:
-        with open(FILE, "w") as f:
-            json.dump(HISTORY, f, indent=4)
-
-
-def add_to_history(text: str, context: str, password: str) -> None:
+def add_to_db(text: str, context: str, password: str) -> None:
     data = {
         "text": text,
         "context": context,
@@ -50,8 +36,7 @@ def add_to_history(text: str, context: str, password: str) -> None:
         data['password'] = response.json().get("password")
     else:
         data['password'] = password
-    HISTORY.append(data)
-    save_history()
+    db.insert(data)
 
 
 def get_password(context: str) -> dict[str, str] | None:
@@ -60,9 +45,21 @@ def get_password(context: str) -> dict[str, str] | None:
         if response.status_code != 200:
             raise Exception(response.text)
         return response.json()
-    for entry in HISTORY:
-        if entry['context'] == context:
-            return entry
+    result = db.search(Password.context == context)
+    if result:
+        return result[0]
+    return None
+
+
+def get_passwords() -> list[dict[str, str]] | None:
+    if auth.is_authenticated():
+        response = requests.get(f"{config.ENDPOINT}/passwords", headers=auth.get_auth_header())
+        if response.status_code != 200:
+            raise Exception(response.text)
+        return response.json()
+    result = db.all()
+    if result:
+        return result
     return None
 
 
@@ -77,12 +74,11 @@ def update_password(text: str, context: str, password: str) -> None:
                                   headers=auth.get_auth_header())
         if response.status_code != 200:
             raise Exception(response.text)
-    for entry in HISTORY:
-        if entry["context"] == context:
-            entry["text"] = text
-            entry["password"] = password
-            entry["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    save_history()
+    db.update({
+        "text": text,
+        "password": password,
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }, Password.context == context)
 
 
 def remove_password(context: str) -> bool:
@@ -90,18 +86,13 @@ def remove_password(context: str) -> bool:
         response = requests.delete(f"{config.ENDPOINT}/passwords/{context}", headers=auth.get_auth_header())
         if response.status_code != 204:
             raise Exception(response.text)
-    for entry in HISTORY:
-        if entry['context'] == context:
-            HISTORY.remove(entry)
-            save_history()
-            return True
-    return False
+    db.remove(Password.context == context)
+    return True
 
 
-def clear_history() -> None:
+def clear_db() -> None:
     if auth.is_authenticated():
         response = requests.delete(f"{config.ENDPOINT}/passwords", headers=auth.get_auth_header())
         if response.status_code != 204:
             raise Exception(response.text)
-    HISTORY.clear()
-    save_history()
+    db.truncate()

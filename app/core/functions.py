@@ -2,7 +2,7 @@ import typer
 
 from passphera_core import InvalidAlgorithmException
 
-from app.backend import auth, history, settings, passwords
+from app.backend import auth, vault, settings, passwords
 from app.core import interface, logger
 
 
@@ -44,7 +44,7 @@ def whoami() -> None:
         logger.log_error(f"{e}")
 
 
-def generate_password(text: str, context: str) -> None:
+def generate_password(text: str, context: str = '') -> None:
     try:
         password: str = passwords.generate_password(text, context)
         interface.display_password(password, text, context)
@@ -58,7 +58,7 @@ def generate_password(text: str, context: str) -> None:
 
 
 def update_password(context: str, text: str | None = None) -> None:
-    db_password: dict[str, str] | None = history.get_password(context)
+    db_password: dict[str, str] | None = vault.get_password(context)
     if db_password is None:
         interface.display_context_error_message(context)
         logger.log_error(f"entered unsaved password context {context}")
@@ -69,7 +69,7 @@ def update_password(context: str, text: str | None = None) -> None:
     password = passwords.update_password(context, text)
     interface.display_password(password, text, context)
     interface.copy_to_clipboard(password)
-    logger.log_info(f"password updated successfully and saved on history")
+    logger.log_info("password updated successfully")
 
 
 def delete_password(context: str) -> None:
@@ -81,6 +81,7 @@ def delete_password(context: str) -> None:
     except Exception as e:
         interface.display_context_error_message(context)
         logger.log_error(f"entered unsaved password context '{context}'")
+        logger.log_error(f"{e}")
 
 
 def change_algorithm(algorithm: str) -> None:
@@ -88,6 +89,9 @@ def change_algorithm(algorithm: str) -> None:
         settings.change_algorithm(algorithm)
         interface.display_message(f"Primary Algorithm has been changed to {algorithm}")
         logger.log_info(f"Primary Algorithm has been changed to {algorithm}")
+    except InvalidAlgorithmException:
+        interface.display_error("Invalid algorithm name")
+        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
     except Exception as e:
         interface.display_error(f"{e}")
         logger.log_error(f"Failed to change primary algorithm to {algorithm}")
@@ -192,7 +196,7 @@ def show_replacements() -> None:
 
 
 def get_password(context: str) -> None:
-    password: dict[str, str] = history.get_password(context)
+    password: dict[str, str] = vault.get_password(context)
     if password is not None:
         interface.display_password(password)
         interface.copy_to_clipboard(password['password'])
@@ -201,11 +205,11 @@ def get_password(context: str) -> None:
 
 
 def get_all_passwords() -> None:
-    interface.display_passwords(history.HISTORY)
+    interface.display_passwords(vault.get_passwords())
 
 
 def clear_database() -> None:
-    history.clear_history()
+    vault.clear_db()
     interface.display_clear_history_message()
 
 def sync() -> None:
