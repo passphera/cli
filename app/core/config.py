@@ -93,7 +93,6 @@ def _init_files() -> None:
 
 
 def _init_generator() -> None:
-    global generator
     if auth.is_authenticated():
         response = requests.get(f"{ENDPOINT}/generators", headers=auth.get_auth_header())
         if response.status_code != 200:

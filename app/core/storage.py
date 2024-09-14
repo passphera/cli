@@ -12,7 +12,6 @@ class EncryptedStorage(Storage):
         self.key = get_random_bytes(16)
 
     def pad(self, s: bytes) -> bytes:
-        # Pad data to be a multiple of 16 bytes
         return s + b'\0' * (AES.block_size - len(s) % AES.block_size)
 
     def unpad(self, s: bytes) -> bytes:
@@ -20,7 +19,7 @@ class EncryptedStorage(Storage):
         return s.rstrip(b'\0')
 
     def encrypt(self, data: bytes) -> bytes:
-        iv = get_random_bytes(AES.block_size)  # Initialization vector for AES
+        iv = get_random_bytes(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         return iv + cipher.encrypt(self.pad(data))
 

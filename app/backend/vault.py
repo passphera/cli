@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 import requests
@@ -14,11 +13,7 @@ Password: Query = Query()
 
 def configure(path: str) -> None:
     global db
-    # db = TinyDB(path, storage=PickleStorage)
-    # db = TinyDB(path, storage=MsgPackStorage)
-    # db = TinyDB(path, storage=CBORStorage)
     db = TinyDB(path, storage=EncryptedStorage)
-    # db = TinyDB(path)
     db.default_table_name = 'passwords'
 
 
