@@ -91,3 +91,7 @@ def clear_db() -> None:
         if response.status_code != 204:
             raise Exception(response.text)
     db.truncate()
+
+
+def sync() -> None:
+    pass

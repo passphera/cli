@@ -58,18 +58,23 @@ def generate_password(text: str, context: str = '') -> None:
 
 
 def update_password(context: str, text: str | None = None) -> None:
-    db_password: dict[str, str] | None = vault.get_password(context)
-    if db_password is None:
+    try:
+        db_password: dict[str, str] | None = vault.get_password(context)
+        if db_password is None:
+            raise ValueError(f"entered unsaved password context {context}")
+        if not text:
+            text: str = typer.prompt("Enter the text to encrypt (leave blank for old one)",
+                                     default=db_password['text'])
+        password = passwords.update_password(context, text)
+        interface.display_password(password, text, context)
+        interface.copy_to_clipboard(password)
+        logger.log_info("password updated successfully")
+    except ValueError as e:
         interface.display_context_error_message(context)
-        logger.log_error(f"entered unsaved password context {context}")
-        return
-    if not text:
-        text: str = typer.prompt("Enter the text to encrypt (leave blank for old one)",
-                                 default=db_password['text'])
-    password = passwords.update_password(context, text)
-    interface.display_password(password, text, context)
-    interface.copy_to_clipboard(password)
-    logger.log_info("password updated successfully")
+        logger.log_error(f"{e}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 def delete_password(context: str) -> None:
@@ -191,26 +196,47 @@ def reset_replacement(character: str) -> None:
 
 
 def show_replacements() -> None:
-    replacements: dict[str, str] = settings.show_all_characters_replacements()
-    interface.display_character_replacements(replacements)
+    try:
+        replacements: dict[str, str] = settings.show_all_characters_replacements()
+        interface.display_character_replacements(replacements)
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 def get_password(context: str) -> None:
-    password: dict[str, str] = vault.get_password(context)
-    if password is not None:
+    try:
+        password: dict[str, str] = vault.get_password(context)
+        if password is None:
+            raise ValueError
         interface.display_password(password)
         interface.copy_to_clipboard(password['password'])
-    else:
+    except ValueError:
         interface.display_context_error_message(context)
 
 
 def get_all_passwords() -> None:
-    interface.display_passwords(vault.get_passwords())
+    try:
+        interface.display_passwords(vault.get_passwords())
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
 
 
 def clear_database() -> None:
-    vault.clear_db()
-    interface.display_clear_history_message()
+    try:
+        vault.clear_db()
+        interface.display_clear_history_message()
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
 
 def sync() -> None:
-    pass
+    try:
+        vault.sync()
+        interface.display_message("Database synced successfully")
+        logger.log_info("Database synced successfully")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")

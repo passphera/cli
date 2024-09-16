@@ -8,10 +8,10 @@ import typer
 from passphera_core import PasswordGenerator
 
 from app.backend import auth, vault
-from app.core import settings, logger
+from app.core import interface, logger, settings
 
 
-__version__: str = '0.16.0'
+__version__: str = '0.17.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -123,6 +123,9 @@ def _init_settings() -> None:
 
 
 def init_configurations() -> None:
-    _init_files()
-    _init_generator()
-    _init_settings()
+    try:
+        _init_files()
+        _init_generator()
+        _init_settings()
+    except Exception as e:
+        interface.display_error(f"{e}")
