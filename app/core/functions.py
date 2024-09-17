@@ -6,6 +6,7 @@ from app.backend import auth, vault, settings, passwords
 from app.core import interface, logger
 
 
+# auth
 def login(email: str, password: str) -> None:
     try:
         auth.login(email, password)
@@ -44,6 +45,155 @@ def whoami() -> None:
         logger.log_error(f"{e}")
 
 
+# settings
+def get_algorithm() -> None:
+    try:
+        interface.display_message(f"Algorithm: {settings.get_algorithm()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_algorithm(algorithm: str) -> None:
+    try:
+        settings.change_algorithm(algorithm)
+        interface.display_message(f"Primary Algorithm has been changed to {algorithm}")
+        logger.log_info(f"Primary Algorithm has been changed to {algorithm}")
+    except InvalidAlgorithmException:
+        interface.display_error("Invalid algorithm name")
+        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
+
+
+def reset_algorithm() -> None:
+    try:
+        settings.reset_algorithm()
+        interface.display_message("Primary Algorithm has been changed to default")
+        logger.log_info("Primary Algorithm has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset algorithm to default")
+
+
+def get_shift() -> None:
+    try:
+        interface.display_message(f"Shift amount: {settings.get_shift()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_shift(amount: int) -> None:
+    try:
+        settings.change_shift(amount)
+        interface.display_message(f"Shift has been changed to {amount}")
+        logger.log_info(f"Shift has been changed to {amount}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change shift to {amount}")
+
+
+def reset_shift() -> None:
+    try:
+        settings.reset_shift()
+        interface.display_message("Shift has been changed to default")
+        logger.log_info("Shift has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset shift to default")
+
+
+def get_multiplier() -> None:
+    try:
+        interface.display_message(f"Multiplier value: {settings.get_multiplier()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_multiplier(value: int) -> None:
+    try:
+        settings.change_multiplier(value)
+        interface.display_message(f"Multiplier has been changed to {value}")
+        logger.log_info(f"Multiplier has been changed to {value}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change multiplier to {value}")
+
+
+def reset_multiplier() -> None:
+    try:
+        settings.reset_multiplier()
+        interface.display_message("Multiplier has been changed to default")
+        logger.log_info("Multiplier has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset multiplier to default")
+
+
+def get_key() -> None:
+    try:
+        interface.display_message(f"Key: {settings.get_key()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_key(key: str) -> None:
+    try:
+        settings.change_key(key)
+        interface.display_message(f"Multiplier has been changed to {key}")
+        logger.log_info(f"Changed key to {key}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change key to {key}")
+
+
+def reset_key() -> None:
+    try:
+        settings.reset_key()
+        interface.display_message("Key has been changed to default")
+        logger.log_info("Key has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset key to default")
+
+
+def get_replacements() -> None:
+    try:
+        replacements: dict[str, str] = settings.get_characters_replacements()
+        interface.display_character_replacements(replacements)
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def replace_character(character: str, replacement: str) -> None:
+    try:
+        settings.replace_character(character, replacement)
+        interface.display_message(f"Character {character} has been replaced with {replacement}")
+        logger.log_info(f"Character {character} has been replaced with {replacement}")
+    except ValueError:
+        interface.display_replacement_error_message(replacement)
+        logger.log_error(f"failed to replace character '{character}' with '{replacement}'")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change character '{character}' replacement to {replacement}")
+
+
+def reset_replacement(character: str) -> None:
+    try:
+        settings.reset_replacement(character)
+        interface.display_message(f"Character {character}'s replacement has been removed")
+        logger.log_info(f"Character {character}'s replacement has been removed")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to reset character '{character}' replacement to default")
+
+
+# passwords
 def generate_password(text: str, context: str = '') -> None:
     try:
         password: str = passwords.generate_password(text, context)
@@ -89,126 +239,10 @@ def delete_password(context: str) -> None:
         logger.log_error(f"{e}")
 
 
-def change_algorithm(algorithm: str) -> None:
-    try:
-        settings.change_algorithm(algorithm)
-        interface.display_message(f"Primary Algorithm has been changed to {algorithm}")
-        logger.log_info(f"Primary Algorithm has been changed to {algorithm}")
-    except InvalidAlgorithmException:
-        interface.display_error("Invalid algorithm name")
-        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
-
-
-def reset_algorithm() -> None:
-    try:
-        settings.reset_algorithm()
-        interface.display_message("Primary Algorithm has been changed to default")
-        logger.log_info("Primary Algorithm has been changed to default")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset algorithm to default")
-
-
-def change_shift(amount: int) -> None:
-    try:
-        settings.change_shift(amount)
-        interface.display_message(f"Shift has been changed to {amount}")
-        logger.log_info(f"Shift has been changed to {amount}")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change shift to {amount}")
-
-
-def reset_shift() -> None:
-    try:
-        settings.reset_shift()
-        interface.display_message("Shift has been changed to default")
-        logger.log_info("Shift has been changed to default")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset shift to default")
-
-
-def change_multiplier(value: int) -> None:
-    try:
-        settings.change_multiplier(value)
-        interface.display_message(f"Multiplier has been changed to {value}")
-        logger.log_info(f"Multiplier has been changed to {value}")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change multiplier to {value}")
-
-
-def reset_multiplier() -> None:
-    try:
-        settings.reset_multiplier()
-        interface.display_message("Multiplier has been changed to default")
-        logger.log_info("Multiplier has been changed to default")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset multiplier to default")
-
-
-def change_key(key: str) -> None:
-    try:
-        settings.change_key(key)
-        interface.display_message(f"Multiplier has been changed to {key}")
-        logger.log_info(f"Changed key to {key}")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change key to {key}")
-
-
-def reset_key() -> None:
-    try:
-        settings.reset_key()
-        interface.display_message("Key has been changed to default")
-        logger.log_info("Key has been changed to default")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset key to default")
-
-
-def replace_character(character: str, replacement: str) -> None:
-    try:
-        settings.replace_character(character, replacement)
-        interface.display_message(f"Character {character} has been replaced with {replacement}")
-        logger.log_info(f"Character {character} has been replaced with {replacement}")
-    except ValueError:
-        interface.display_replacement_error_message(replacement)
-        logger.log_error(f"failed to replace character '{character}' with '{replacement}'")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change character '{character}' replacement to {replacement}")
-
-
-def reset_replacement(character: str) -> None:
-    try:
-        settings.reset_replacement(character)
-        interface.display_message(f"Character {character}'s replacement has been removed")
-        logger.log_info(f"Character {character}'s replacement has been removed")
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to reset character '{character}' replacement to default")
-
-
-def show_replacements() -> None:
-    try:
-        replacements: dict[str, str] = settings.show_all_characters_replacements()
-        interface.display_character_replacements(replacements)
-    except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
-
-
+# vault
 def get_password(context: str) -> None:
     try:
         password: dict[str, str] = vault.get_password(context)
-        if password is None:
-            raise ValueError
         interface.display_password(password)
         interface.copy_to_clipboard(password['password'])
     except ValueError:
@@ -234,8 +268,8 @@ def clear_database() -> None:
 
 def sync() -> None:
     try:
-        vault.sync()
-        interface.display_message("Database synced successfully")
+        local, server = vault.sync()
+        interface.display_sync_message(local, server)
         logger.log_info("Database synced successfully")
     except Exception as e:
         interface.display_error(f"{e}")

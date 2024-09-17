@@ -104,10 +104,10 @@ def display_password(password: dict[str, str] | str, text: str = '', context: st
 
 
 def display_passwords(passwords: list[dict[str, str]]):
-    table: Table = Table("text", "password", "context", show_header=True, header_style="bold magenta",
+    table: Table = Table("context", "text", "password", show_header=True, header_style="bold magenta",
                          border_style="blue")
     for password in passwords:
-        table.add_row(password['text'], password['password'], password['context'])
+        table.add_row(password['context'], password['text'], password['password'])
     _display_panel(table)
 
 
@@ -128,8 +128,12 @@ def display_password_removed_message() -> None:
 
 
 def display_clear_history_message() -> None:
-    console.print("[orange]The history has been cleared, if you want to restore it, you should have a backup, "
+    console.print("[yellow]The history has been cleared, if you want to restore it, you should have a backup, "
                   "or regenerate it.")
+
+
+def display_sync_message(local: int, server: int) -> None:
+    console.print(f"Database synced successfully\n{local} local has synced\n{server} server has synced")
 
 
 def display_context_error_message(context: str) -> None:

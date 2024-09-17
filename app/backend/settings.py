@@ -4,6 +4,10 @@ from app.backend import auth
 from app.core import config, settings
 
 
+def get_algorithm() -> str:
+    return config.generator.algorithm
+
+
 def change_algorithm(algorithm_name: str) -> None:
     if auth.is_authenticated():
         data = {
@@ -34,6 +38,10 @@ def reset_algorithm() -> None:
             raise Exception(response.text)
     config.generator.algorithm = config.DEFAULT_ALGORITHM
     settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.DEFAULT_ALGORITHM)
+
+
+def get_shift() -> int:
+    return config.generator.shift
 
 
 def change_shift(amount: int) -> None:
@@ -68,6 +76,10 @@ def reset_shift() -> None:
     settings.set_key(settings.__encryption_method__, settings.__shift__, config.DEFAULT_SHIFT)
 
 
+def get_multiplier() -> int:
+    return config.generator.multiplier
+
+
 def change_multiplier(value: int) -> None:
     if auth.is_authenticated():
         data = {
@@ -100,6 +112,10 @@ def reset_multiplier() -> None:
     settings.set_key(settings.__encryption_method__, settings.__multiplier__, config.DEFAULT_MULTIPLIER)
 
 
+def get_key() -> str:
+    return config.generator.key
+
+
 def change_key(new_key: str) -> None:
     if auth.is_authenticated():
         data = {
@@ -130,6 +146,15 @@ def reset_key() -> None:
             raise Exception(response.text)
     config.generator.key = config.DEFAULT_KEY
     settings.set_key(settings.__encryption_method__, settings.__key__, config.DEFAULT_KEY)
+
+
+def get_characters_replacements() -> dict[str, str]:
+    if auth.is_authenticated():
+        response = requests.get(f"{config.ENDPOINT}/generators/", headers=auth.get_auth_header())
+        if response.status_code != 200:
+            raise Exception(response.text)
+        return response.json()['characters_replacements']
+    return settings.get_settings(settings.__characters_replacements__)
 
 
 def replace_character(character: str, replacement: str) -> None:
@@ -165,12 +190,3 @@ def reset_replacement(character: str) -> None:
             raise Exception(response.text)
     config.generator.reset_character(character)
     settings.set_key(settings.__characters_replacements__, character, character)
-
-
-def show_all_characters_replacements() -> dict[str, str]:
-    if auth.is_authenticated():
-        response = requests.get(f"{config.ENDPOINT}/generators/", headers=auth.get_auth_header())
-        if response.status_code != 200:
-            raise Exception(response.text)
-        return response.json()['characters_replacements']
-    return settings.get_settings(settings.__characters_replacements__)

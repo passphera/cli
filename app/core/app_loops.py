@@ -107,7 +107,7 @@ def settings_loop() -> None:
             character: str = typer.prompt("Enter the character to remove it's replacement")
             functions.reset_replacement(character)
         case 12:
-            functions.show_replacements()
+            functions.get_replacements()
 
 
 def history_loop() -> None:
