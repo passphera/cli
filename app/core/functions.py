@@ -144,7 +144,7 @@ def get_key() -> None:
 def change_key(key: str) -> None:
     try:
         settings.change_key(key)
-        interface.display_message(f"Multiplier has been changed to {key}")
+        interface.display_message(f"Key has been changed to {key}")
         logger.log_info(f"Changed key to {key}")
     except Exception as e:
         interface.display_error(f"{e}")
@@ -159,6 +159,62 @@ def reset_key() -> None:
     except Exception as e:
         interface.display_error(f"{e}")
         logger.log_error("Failed to reset key to default")
+
+
+def get_prefix() -> None:
+    try:
+        interface.display_message(f"Prefix: {settings.get_prefix()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_prefix(prefix: str) -> None:
+    try:
+        settings.change_prefix(prefix)
+        interface.display_message(f"Prefix has been changed to {prefix}")
+        logger.log_info(f"Changed prefix to {prefix}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change prefix to {prefix}")
+
+
+def reset_prefix() -> None:
+    try:
+        settings.reset_prefix()
+        interface.display_message("Prefix has been changed to default")
+        logger.log_info("Prefix has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset prefix to default")
+
+
+def get_postfix() -> None:
+    try:
+        interface.display_message(f"Postfix: {settings.get_postfix()}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
+def change_postfix(postfix: str) -> None:
+    try:
+        settings.change_postfix(postfix)
+        interface.display_message(f"Postfix has been changed to {postfix}")
+        logger.log_info(f"Changed postfix to {postfix}")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"Failed to change postfix to {postfix}")
+
+
+def reset_postfix() -> None:
+    try:
+        settings.reset_postfix()
+        interface.display_message("Postfix has been changed to default")
+        logger.log_info("Postfix has been changed to default")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error("Failed to reset postfix to default")
 
 
 def get_replacements() -> None:
@@ -229,11 +285,11 @@ def update_password(context: str, text: str | None = None) -> None:
 
 def delete_password(context: str) -> None:
     try:
-        entry = passwords.delete_password(context)
+        entry: dict[str, str] = passwords.delete_password(context)
         interface.display_password_removed_message()
         interface.display_password(entry['context'], entry['text'], entry['password'])
         logger.log_warning("saved password was removed from database")
-    except Exception as e:
+    except ValueError as e:
         interface.display_context_error_message(context)
         logger.log_error(f"entered unsaved password context '{context}'")
         logger.log_error(f"{e}")
@@ -243,6 +299,8 @@ def delete_password(context: str) -> None:
 def get_password(context: str) -> None:
     try:
         password: dict[str, str] = vault.get_password(context)
+        if password is None:
+            raise ValueError
         interface.display_password(password)
         interface.copy_to_clipboard(password['password'])
     except ValueError:

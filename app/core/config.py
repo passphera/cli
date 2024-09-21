@@ -11,7 +11,7 @@ from app.backend import auth, vault
 from app.core import interface, logger, settings
 
 
-__version__: str = '0.18.0'
+__version__: str = '0.19.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -21,8 +21,10 @@ __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 DEFAULT_SHIFT: str = "3"
 DEFAULT_MULTIPLIER: str = "3"
 DEFAULT_KEY: str = "hill"
+DEFAULT_PREFIX: str = "prefix"
+DEFAULT_POSTFIX: str = "postfix"
 DEFAULT_ALGORITHM: str = "hill"
-DEFAULT_ENCRYPTED: str = "false"
+TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
 ENDPOINT: str = "http://0.0.0.0:8000/api/v1"
 
@@ -101,6 +103,8 @@ def _init_generator() -> None:
         generator.shift = response.json().get("shift")
         generator.multiplier = response.json().get("multiplier")
         generator.key = response.json().get("key")
+        generator.prefix = response.json().get("prefix")
+        generator.postfix = response.json().get("postfix")
         for key, value in response.json().get('characters_replacements', {}).items():
             generator.replace_character(key, value)
     else:
@@ -108,6 +112,8 @@ def _init_generator() -> None:
         generator.shift = int(settings.get_key(settings.__encryption_method__, settings.__shift__, DEFAULT_SHIFT))
         generator.multiplier = int(settings.get_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER))
         generator.key = settings.get_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
+        generator.prefix = settings.get_key(settings.__encryption_method__, settings.__prefix__, DEFAULT_PREFIX)
+        generator.postfix = settings.get_key(settings.__encryption_method__, settings.__postfix__, DEFAULT_POSTFIX)
         for key, value in settings.get_settings(settings.__characters_replacements__).items():
             generator.replace_character(key, value)
 

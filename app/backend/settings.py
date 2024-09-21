@@ -4,42 +4,6 @@ from app.backend import auth
 from app.core import config, settings
 
 
-def get_algorithm() -> str:
-    return config.generator.algorithm
-
-
-def change_algorithm(algorithm_name: str) -> None:
-    if auth.is_authenticated():
-        data = {
-            'algorithm': algorithm_name
-        }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
-            json=data,
-            headers=auth.get_auth_header()
-        )
-        if response.status_code != 200:
-            raise Exception(response.text)
-    config.generator.algorithm = algorithm_name
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm_name)
-
-
-def reset_algorithm() -> None:
-    if auth.is_authenticated():
-        data = {
-            'algorithm': config.DEFAULT_ALGORITHM
-        }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
-            json=data,
-            headers=auth.get_auth_header()
-        )
-        if response.status_code != 200:
-            raise Exception(response.text)
-    config.generator.algorithm = config.DEFAULT_ALGORITHM
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.DEFAULT_ALGORITHM)
-
-
 def get_shift() -> int:
     return config.generator.shift
 
@@ -116,10 +80,10 @@ def get_key() -> str:
     return config.generator.key
 
 
-def change_key(new_key: str) -> None:
+def change_key(key: str) -> None:
     if auth.is_authenticated():
         data = {
-            'key': new_key
+            'key': key
         }
         response = requests.patch(
             f"{config.ENDPOINT}/generators",
@@ -128,8 +92,8 @@ def change_key(new_key: str) -> None:
         )
         if response.status_code != 200:
             raise Exception(response.text)
-    config.generator.key = new_key
-    settings.set_key(settings.__encryption_method__, settings.__key__, new_key)
+    config.generator.key = key
+    settings.set_key(settings.__encryption_method__, settings.__key__, key)
 
 
 def reset_key() -> None:
@@ -146,6 +110,114 @@ def reset_key() -> None:
             raise Exception(response.text)
     config.generator.key = config.DEFAULT_KEY
     settings.set_key(settings.__encryption_method__, settings.__key__, config.DEFAULT_KEY)
+
+
+def get_prefix() -> str:
+    return config.generator.prefix
+
+
+def change_prefix(prefix: str) -> None:
+    if auth.is_authenticated():
+        data = {
+            'prefix': prefix
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.prefix = prefix
+    settings.set_key(settings.__encryption_method__, settings.__prefix__, prefix)
+
+
+def reset_prefix() -> None:
+    if auth.is_authenticated():
+        data = {
+            'prefix': config.DEFAULT_PREFIX
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.prefix = config.DEFAULT_PREFIX
+    settings.set_key(settings.__encryption_method__, settings.__prefix__, config.DEFAULT_PREFIX)
+
+
+def get_postfix() -> str:
+    return config.generator.postfix
+
+
+def change_postfix(postfix: str) -> None:
+    if auth.is_authenticated():
+        data = {
+            'postfix': postfix
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.postfix = postfix
+    settings.set_key(settings.__encryption_method__, settings.__postfix__, postfix)
+
+
+def reset_postfix() -> None:
+    if auth.is_authenticated():
+        data = {
+            'postfix': config.DEFAULT_POSTFIX
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.postfix = config.DEFAULT_POSTFIX
+    settings.set_key(settings.__encryption_method__, settings.__postfix__, config.DEFAULT_POSTFIX)
+
+
+def get_algorithm() -> str:
+    return config.generator.algorithm
+
+
+def change_algorithm(algorithm_name: str) -> None:
+    if auth.is_authenticated():
+        data = {
+            'algorithm': algorithm_name
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.algorithm = algorithm_name
+    settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm_name)
+
+
+def reset_algorithm() -> None:
+    if auth.is_authenticated():
+        data = {
+            'algorithm': config.DEFAULT_ALGORITHM
+        }
+        response = requests.patch(
+            f"{config.ENDPOINT}/generators",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.algorithm = config.DEFAULT_ALGORITHM
+    settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.DEFAULT_ALGORITHM)
 
 
 def get_characters_replacements() -> dict[str, str]:

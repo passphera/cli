@@ -20,26 +20,6 @@ def settings_callback(ctx: typer.Context) -> None:
 
 
 @app.command()
-def get_algorithm() -> None:
-    """Show ciphering primary algorithm"""
-    functions.get_algorithm()
-
-
-@app.command()
-def change_algorithm(
-        algorithm_name: Annotated[str, typer.Argument(help="Primary algorithm name")],
-) -> None:
-    """Change ciphering primary algorithm"""
-    functions.change_algorithm(algorithm_name)
-
-
-@app.command()
-def reset_algorithm() -> None:
-    """Reset ciphering primary algorithm to default"""
-    functions.reset_algorithm()
-
-
-@app.command()
 def get_shift() -> None:
     """Show ciphering shift amount"""
     functions.get_shift()
@@ -97,6 +77,66 @@ def change_key(
 def reset_key() -> None:
     """Reset ciphering key to default value"""
     functions.reset_key()
+
+
+@app.command()
+def get_prefix() -> None:
+    """Show ciphering prefix"""
+    functions.get_prefix()
+
+
+@app.command()
+def change_prefix(
+        prefix: Annotated[str, typer.Argument(help="Text prefix")],
+) -> None:
+    """Change ciphering prefix"""
+    functions.change_prefix(prefix)
+
+
+@app.command()
+def reset_prefix() -> None:
+    """Reset ciphering prefix to default"""
+    functions.reset_prefix()
+
+
+@app.command()
+def get_postfix() -> None:
+    """Show ciphering postfix"""
+    functions.get_postfix()
+
+
+@app.command()
+def change_postfix(
+        postfix: Annotated[str, typer.Argument(help="Text postfix")],
+) -> None:
+    """Change ciphering postfix"""
+    functions.change_postfix(postfix)
+
+
+@app.command()
+def reset_postfix() -> None:
+    """Reset ciphering postfix to default"""
+    functions.reset_postfix()
+
+
+@app.command()
+def get_algorithm() -> None:
+    """Show ciphering primary algorithm"""
+    functions.get_algorithm()
+
+
+@app.command()
+def change_algorithm(
+        algorithm_name: Annotated[str, typer.Argument(help="Primary algorithm name")],
+) -> None:
+    """Change ciphering primary algorithm"""
+    functions.change_algorithm(algorithm_name)
+
+
+@app.command()
+def reset_algorithm() -> None:
+    """Reset ciphering primary algorithm to default"""
+    functions.reset_algorithm()
 
 
 @app.command()

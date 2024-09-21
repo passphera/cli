@@ -17,6 +17,7 @@ def update_password(context: str, text: str) -> str:
 
 def delete_password(context: str) -> dict[str, str]:
     password: dict[str, str] | None = vault.get_password(context)
-    if not vault.remove_password(context):
+    print(password)
+    if not vault.delete_password(context):
         raise Exception
     return password

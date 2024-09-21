@@ -13,10 +13,12 @@ __characters_replacements__: str = "Characters Replacements"
 
 # keys
 __access_token__: str = "access-token"
-__algorithm__: str = "primary-algorithm"
 __shift__: str = "shift-amount"
 __multiplier__: str = "multiplier-amount"
 __key__: str = "cipher-key"
+__prefix__: str = "prefix"
+__postfix__: str = "postfix"
+__algorithm__: str = "primary-algorithm"
 
 
 __config: ConfigParser = ConfigParser()
