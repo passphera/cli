@@ -3,20 +3,14 @@ from typing import Annotated
 import typer
 
 from app.core import functions
-from app.core.app_loops import history_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def history_callback(ctx: typer.Context) -> None:
-    """
-    Access history, get password or passwords, save/load history data to a backup, hash passwords on history.
-    """
-    if ctx.invoked_subcommand is None:
-        while True:
-            history_loop()
+    """Access history, get password or passwords, save/load history data to a backup, hash passwords on history."""
 
 
 @app.command()
@@ -40,7 +34,7 @@ def clear() -> None:
 @app.command()
 def sync() -> None:
     """Sync with shared database"""
-    functions.sync()
+    functions.sync_vault()
 
 
 if __name__ == "__main__":

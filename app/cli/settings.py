@@ -3,20 +3,14 @@ from typing import Annotated
 import typer
 
 from app.core import functions
-from app.core.app_loops import settings_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def settings_callback(ctx: typer.Context) -> None:
-    """
-    Manage configurations, configure the ciphering settings (shift amount, characters replacements, etc...)
-    """
-    if ctx.invoked_subcommand is None:
-        while True:
-            settings_loop()
+    """Manage configurations, configure the ciphering settings (shift amount, characters replacements, etc...)"""
 
 
 @app.command()
@@ -160,6 +154,12 @@ def reset_replacement(
 ) -> None:
     """Reset a character's replacement"""
     functions.reset_replacement(character)
+
+
+@app.command()
+def sync() -> None:
+    """Sync local settings with cloud settings id logged in"""
+    functions.sync_settings()
 
 
 if __name__ == "__main__":

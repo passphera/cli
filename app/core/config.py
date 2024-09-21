@@ -11,7 +11,7 @@ from app.backend import auth, vault
 from app.core import interface, logger, settings
 
 
-__version__: str = '0.19.0'
+__version__: str = '0.20.0'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -96,7 +96,7 @@ def _init_files() -> None:
 
 def _init_generator() -> None:
     if auth.is_authenticated():
-        response = requests.get(f"{ENDPOINT}/generators", headers=auth.get_auth_header())
+        response = requests.get(f"{ENDPOINT}/generator", headers=auth.get_auth_header())
         if response.status_code != 200:
             raise Exception(response.text)
         generator.algorithm = response.json().get("algorithm")

@@ -1,9 +1,7 @@
 from typing import Any
 
 import pyperclip
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
+from typer.rich_utils import Console, Panel, Table
 
 
 console: Console = Console()
@@ -11,78 +9,6 @@ console: Console = Console()
 
 def _display_panel(message: Any, title: str = None) -> None:
     console.print(Panel(message, title=title, title_align="left", style="bold cyan", border_style="green"))
-
-
-def _display_menu(prompt: str, choices: list[int], title: str) -> int:
-    _display_panel(prompt, title)
-    while True:
-        try:
-            choice = int(console.input("Select an option: "))
-            if choice in choices:
-                return choice
-            console.print(f"[yellow]Invalid choice. Please select from 0 to {len(choices) - 1}.")
-        except ValueError:
-            console.print("[red]Invalid input. Please enter a number.")
-
-
-def display_main_menu() -> int:
-    prompt = """1. Authentication
-2. Passwords
-3. Settings
-4. Database
-0. Exit"""
-    choices = [0, 1, 2, 3, 4]
-    return _display_menu(prompt, choices, "passphera CLI Main Menu")
-
-
-def display_auth_menu() -> int:
-    prompt = """1. Back
-2. Login with email and password
-3. Logout
-4. Register new user
-5. My information
-0. Exit"""
-    choices = [0, 1, 2, 3, 4, 5]
-    return _display_menu(prompt, choices, "passphera CLI Authentication Menu")
-
-
-def display_passwords_menu() -> int:
-    prompt = """1.  Back
-2.  Generate new password
-3.  Update saved password
-4.  Delete saved password
-0.  Exit"""
-    choices = [0, 1, 2, 3, 4]
-    return _display_menu(prompt, choices, "passphera CLI Passwords Menu")
-
-
-def display_settings_menu() -> int:
-    prompt = """1.  Back
-2.  Change cipher algorithm
-3.  Reset cipher algorithm to default value
-4.  Change cipher shift
-5.  Reset cipher shift to default value
-6.  Change cipher multiplier
-7.  Reset cipher multiplier to default value
-8.  Change cipher key
-9.  Reset cipher key to default value
-10. Replace an alphabet character with a set of custom characters
-11. Reset an alphabet character replacement to default value
-12. Show characters replacements
-0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    return _display_menu(prompt, choices, "passphera CLI Settings Menu")
-
-
-def display_history_menu() -> int:
-    prompt = """1.  Back
-2.  Get saved password
-3.  Show all saved passwords
-4.  Clear database
-5.  Sync with shared database
-0.  Exit"""
-    choices = [0, 1, 2, 3, 4, 5]
-    return _display_menu(prompt, choices, "passphera CLI History Menu")
 
 
 def display_user_info(user: dict[str, str]) -> None:
@@ -131,8 +57,11 @@ def display_clear_history_message() -> None:
     console.print("[yellow]The history has been cleared, if you want to restore it, you should have a backup, "
                   "or regenerate it.")
 
+def display_sync_settings_message() -> None:
+    console.print("Settings synced successfully, now all settings are matching the cloud settings.")
 
-def display_sync_message(local: int, server: int) -> None:
+
+def display_sync_vault_message(local: int, server: int) -> None:
     console.print(f"Database synced successfully\n{local} local has synced\n{server} server has synced")
 
 

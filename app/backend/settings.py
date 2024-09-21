@@ -13,8 +13,8 @@ def change_shift(amount: int) -> None:
         data = {
             'shift': amount
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -29,8 +29,8 @@ def reset_shift() -> None:
         data = {
             'shift': config.DEFAULT_SHIFT
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -49,8 +49,8 @@ def change_multiplier(value: int) -> None:
         data = {
             'multiplier': value
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -65,8 +65,8 @@ def reset_multiplier() -> None:
         data = {
             'multiplier': config.DEFAULT_MULTIPLIER
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -85,8 +85,8 @@ def change_key(key: str) -> None:
         data = {
             'key': key
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -101,8 +101,8 @@ def reset_key() -> None:
         data = {
             'key': config.DEFAULT_KEY
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -121,8 +121,8 @@ def change_prefix(prefix: str) -> None:
         data = {
             'prefix': prefix
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -137,8 +137,8 @@ def reset_prefix() -> None:
         data = {
             'prefix': config.DEFAULT_PREFIX
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -157,8 +157,8 @@ def change_postfix(postfix: str) -> None:
         data = {
             'postfix': postfix
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -173,8 +173,8 @@ def reset_postfix() -> None:
         data = {
             'postfix': config.DEFAULT_POSTFIX
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -193,8 +193,8 @@ def change_algorithm(algorithm_name: str) -> None:
         data = {
             'algorithm': algorithm_name
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -209,8 +209,8 @@ def reset_algorithm() -> None:
         data = {
             'algorithm': config.DEFAULT_ALGORITHM
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -222,7 +222,7 @@ def reset_algorithm() -> None:
 
 def get_characters_replacements() -> dict[str, str]:
     if auth.is_authenticated():
-        response = requests.get(f"{config.ENDPOINT}/generators/", headers=auth.get_auth_header())
+        response = requests.get(f"{config.ENDPOINT}/generator/", headers=auth.get_auth_header())
         if response.status_code != 200:
             raise Exception(response.text)
         return response.json()['characters_replacements']
@@ -237,8 +237,8 @@ def replace_character(character: str, replacement: str) -> None:
             'character': character,
             'replacement': replacement,
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators/replace-character",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator/replace-character",
             params=params,
             headers=auth.get_auth_header()
         )
@@ -253,8 +253,8 @@ def reset_replacement(character: str) -> None:
         params = {
             'character': character,
         }
-        response = requests.patch(
-            f"{config.ENDPOINT}/generators/reset-character",
+        response = requests.put(
+            f"{config.ENDPOINT}/generator/reset-character",
             params=params,
             headers=auth.get_auth_header()
         )
@@ -262,3 +262,36 @@ def reset_replacement(character: str) -> None:
             raise Exception(response.text)
     config.generator.reset_character(character)
     settings.set_key(settings.__characters_replacements__, character, character)
+
+
+def sync() -> None:
+    if not auth.is_authenticated():
+        raise Exception('You should login first')
+    try:
+        response = requests.get(f"{config.ENDPOINT}/generator", headers=auth.get_auth_header())
+        if response.status_code != 200:
+            raise Exception(response.text)
+        shift = str(response.json()['shift'])
+        multiplier = str(response.json()['multiplier'])
+        key = str(response.json()['key'])
+        prefix = str(response.json()['prefix'])
+        postfix = str(response.json()['postfix'])
+        algorithm = str(response.json()['algorithm'])
+        config.generator.shift = int(shift)
+        settings.set_key(settings.__encryption_method__, settings.__shift__, shift)
+        config.generator.multiplier = int(multiplier)
+        settings.set_key(settings.__encryption_method__, settings.__multiplier__, multiplier)
+        config.generator.key = key
+        settings.set_key(settings.__encryption_method__, settings.__key__, key)
+        config.generator.prefix = prefix
+        settings.set_key(settings.__encryption_method__, settings.__prefix__, prefix)
+        config.generator.postfix = postfix
+        settings.set_key(settings.__encryption_method__, settings.__postfix__, postfix)
+        config.generator.algorithm = algorithm
+        settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm)
+        for character in response.json()['characters_replacements']:
+            replacement = response.json()['characters_replacements'][character]
+            config.generator.replace_character(character, replacement)
+            settings.set_key(settings.__characters_replacements__, character, replacement)
+    except requests.RequestException as e:
+        raise Exception(f'Error fetching server settings: {str(e)}')

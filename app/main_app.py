@@ -1,7 +1,7 @@
 import typer
 
 from app.cli import passwords, settings, vault, auth
-from app.core import app_loops, config
+from app.core import config
 
 
 app: typer.Typer = typer.Typer(rich_markup_mode="rich")
@@ -11,17 +11,13 @@ app.add_typer(vault.app, name="vault")
 app.add_typer(auth.app, name="auth")
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def app_callback(
         ctx: typer.Context,
         version: bool = typer.Option(None, "--version", "-v",
                                      is_eager=True, callback=config.version_callback, help="Show version and exit")
 ) -> None:
     """passphera-cli - Strong passwords generator cli tool to keep track of all your passwords."""
-    if ctx.invoked_subcommand is None:
-        # config.init_configurations()
-        while True:
-            app_loops.main_loop()
 
 
 def main() -> None:

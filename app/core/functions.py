@@ -249,6 +249,16 @@ def reset_replacement(character: str) -> None:
         logger.log_error(f"Failed to reset character '{character}' replacement to default")
 
 
+def sync_settings() -> None:
+    try:
+        settings.sync()
+        interface.display_sync_settings_message()
+        logger.log_info("Settings synced successfully")
+    except Exception as e:
+        interface.display_error(f"{e}")
+        logger.log_error(f"{e}")
+
+
 # passwords
 def generate_password(text: str, context: str = '') -> None:
     try:
@@ -324,10 +334,10 @@ def clear_database() -> None:
         logger.log_error(f"{e}")
 
 
-def sync() -> None:
+def sync_vault() -> None:
     try:
         local, server = vault.sync()
-        interface.display_sync_message(local, server)
+        interface.display_sync_vault_message(local, server)
         logger.log_info("Database synced successfully")
     except Exception as e:
         interface.display_error(f"{e}")

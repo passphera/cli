@@ -3,18 +3,14 @@ from typing import Annotated
 import typer
 
 from app.core import functions
-from app.core.app_loops import authentication_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def auth_callback(ctx: typer.Context) -> None:
     """Manage authentication (signup, login, logout)"""
-    if ctx.invoked_subcommand is None:
-        while True:
-            authentication_loop()
 
 
 @app.command()

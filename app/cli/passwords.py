@@ -1,21 +1,16 @@
 from typing import Annotated, Optional
 
 import typer
-from rich.prompt import Prompt
 
 from app.core import functions
-from app.core.app_loops import passwords_loop
 
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def passwords_callback(ctx: typer.Context) -> None:
     """Manage passwords, create, update, or delete passwords."""
-    if ctx.invoked_subcommand is None:
-        while True:
-            passwords_loop()
 
 
 @app.command()
@@ -27,7 +22,7 @@ def generate(
 ) -> None:
     """Generate new password (and optionally save it)"""
     if not context:
-        context = Prompt.ask("Enter a context if you want to save the password")
+        context = typer.prompt("Enter a context if you want to save the password", default="", show_default=False)
     functions.generate_password(text, context)
 
 
