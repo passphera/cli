@@ -13,8 +13,7 @@ def _display_panel(message: Any, title: str = None) -> None:
 
 def display_user_info(user: dict[str, str]) -> None:
     info = f"""Username: {user.get('username')}
-Email: {user.get('email')}
-ID: {user.get('id')}"""
+Email: {user.get('email')}"""
     _display_panel(info, "User Information")
 
 

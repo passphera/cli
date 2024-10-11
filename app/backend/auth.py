@@ -4,7 +4,7 @@ from app.core import config, settings
 
 
 def validate_token() -> bool:
-    token = settings.get_key(settings.__auth__, settings.__access_token__)
+    token = settings.get_key(settings.AUTH, settings.ACCESS_TOKEN)
     if not token:
         return False
     headers = {"Authorization": f"Bearer {token}"}
@@ -20,9 +20,9 @@ def validate_token() -> bool:
 
 def is_authenticated() -> bool:
     if validate_token():
-        return settings.get_key(settings.__auth__, settings.__access_token__) is not None
+        return settings.get_key(settings.AUTH, settings.ACCESS_TOKEN) is not None
     else:
-        settings.delete_key(settings.__auth__, settings.__access_token__)
+        settings.delete_key(settings.AUTH, settings.ACCESS_TOKEN)
         return False
 
 
@@ -31,7 +31,7 @@ def get_auth_header() -> dict[str, str]:
         raise Exception("Not logged in")
     return {
         'accept': 'application/json',
-        'Authorization': f'Bearer {settings.get_key(settings.__auth__, settings.__access_token__)}',
+        'Authorization': f'Bearer {settings.get_key(settings.AUTH, settings.ACCESS_TOKEN)}',
     }
 
 
@@ -52,13 +52,13 @@ def login(email: str, password: str) -> None:
     response = requests.post(f"{config.ENDPOINT}/auth/login", data=data)
     if response.status_code != 200:
         raise Exception("Invalid credentials")
-    settings.set_key(settings.__auth__, settings.__access_token__, response.json()['access_token'])
+    settings.set_key(settings.AUTH, settings.ACCESS_TOKEN, response.json()['access_token'])
 
 
 def logout() -> None:
     if not is_authenticated():
         raise Exception("Already logged out")
-    settings.delete_key(settings.__auth__, settings.__access_token__)
+    settings.delete_key(settings.AUTH, settings.ACCESS_TOKEN)
 
 
 def signup(email: str, username: str, password: str) -> None:

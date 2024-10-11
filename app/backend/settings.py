@@ -21,7 +21,7 @@ def change_shift(amount: int) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.shift = amount
-    settings.set_key(settings.__encryption_method__, settings.__shift__, str(amount))
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.SHIFT, str(amount))
 
 
 def reset_shift() -> None:
@@ -37,7 +37,7 @@ def reset_shift() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.shift = config.DEFAULT_SHIFT
-    settings.set_key(settings.__encryption_method__, settings.__shift__, config.DEFAULT_SHIFT)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.SHIFT, config.DEFAULT_SHIFT)
 
 
 def get_multiplier() -> int:
@@ -57,7 +57,7 @@ def change_multiplier(value: int) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.multiplier = value
-    settings.set_key(settings.__encryption_method__, settings.__multiplier__, str(value))
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, str(value))
 
 
 def reset_multiplier() -> None:
@@ -73,7 +73,7 @@ def reset_multiplier() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.shift = config.DEFAULT_MULTIPLIER
-    settings.set_key(settings.__encryption_method__, settings.__multiplier__, config.DEFAULT_MULTIPLIER)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, config.DEFAULT_MULTIPLIER)
 
 
 def get_key() -> str:
@@ -93,7 +93,7 @@ def change_key(key: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.key = key
-    settings.set_key(settings.__encryption_method__, settings.__key__, key)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.KEY, key)
 
 
 def reset_key() -> None:
@@ -109,7 +109,7 @@ def reset_key() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.key = config.DEFAULT_KEY
-    settings.set_key(settings.__encryption_method__, settings.__key__, config.DEFAULT_KEY)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.KEY, config.DEFAULT_KEY)
 
 
 def get_prefix() -> str:
@@ -129,7 +129,7 @@ def change_prefix(prefix: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.prefix = prefix
-    settings.set_key(settings.__encryption_method__, settings.__prefix__, prefix)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.PREFIX, prefix)
 
 
 def reset_prefix() -> None:
@@ -145,7 +145,7 @@ def reset_prefix() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.prefix = config.DEFAULT_PREFIX
-    settings.set_key(settings.__encryption_method__, settings.__prefix__, config.DEFAULT_PREFIX)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.PREFIX, config.DEFAULT_PREFIX)
 
 
 def get_postfix() -> str:
@@ -165,7 +165,7 @@ def change_postfix(postfix: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.postfix = postfix
-    settings.set_key(settings.__encryption_method__, settings.__postfix__, postfix)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.POSTFIX, postfix)
 
 
 def reset_postfix() -> None:
@@ -181,7 +181,7 @@ def reset_postfix() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.postfix = config.DEFAULT_POSTFIX
-    settings.set_key(settings.__encryption_method__, settings.__postfix__, config.DEFAULT_POSTFIX)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.POSTFIX, config.DEFAULT_POSTFIX)
 
 
 def get_algorithm() -> str:
@@ -201,7 +201,7 @@ def change_algorithm(algorithm_name: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.algorithm = algorithm_name
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm_name)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, algorithm_name)
 
 
 def reset_algorithm() -> None:
@@ -217,7 +217,7 @@ def reset_algorithm() -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.algorithm = config.DEFAULT_ALGORITHM
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, config.DEFAULT_ALGORITHM)
+    settings.set_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, config.DEFAULT_ALGORITHM)
 
 
 def get_characters_replacements() -> dict[str, str]:
@@ -226,7 +226,7 @@ def get_characters_replacements() -> dict[str, str]:
         if response.status_code != 200:
             raise Exception(response.text)
         return response.json()['characters_replacements']
-    return settings.get_settings(settings.__characters_replacements__)
+    return settings.get_settings(settings.CHARACTERS_REPLACEMENTS)
 
 
 def replace_character(character: str, replacement: str) -> None:
@@ -245,7 +245,7 @@ def replace_character(character: str, replacement: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.replace_character(character, replacement)
-    settings.set_key(settings.__characters_replacements__, character, replacement)
+    settings.set_key(settings.CHARACTERS_REPLACEMENTS, character, replacement)
 
 
 def reset_replacement(character: str) -> None:
@@ -261,7 +261,7 @@ def reset_replacement(character: str) -> None:
         if response.status_code != 200:
             raise Exception(response.text)
     config.generator.reset_character(character)
-    settings.set_key(settings.__characters_replacements__, character, character)
+    settings.set_key(settings.CHARACTERS_REPLACEMENTS, character, character)
 
 
 def sync() -> None:
@@ -278,20 +278,20 @@ def sync() -> None:
         postfix = str(response.json()['postfix'])
         algorithm = str(response.json()['algorithm'])
         config.generator.shift = int(shift)
-        settings.set_key(settings.__encryption_method__, settings.__shift__, shift)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.SHIFT, shift)
         config.generator.multiplier = int(multiplier)
-        settings.set_key(settings.__encryption_method__, settings.__multiplier__, multiplier)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, multiplier)
         config.generator.key = key
-        settings.set_key(settings.__encryption_method__, settings.__key__, key)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.KEY, key)
         config.generator.prefix = prefix
-        settings.set_key(settings.__encryption_method__, settings.__prefix__, prefix)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.PREFIX, prefix)
         config.generator.postfix = postfix
-        settings.set_key(settings.__encryption_method__, settings.__postfix__, postfix)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.POSTFIX, postfix)
         config.generator.algorithm = algorithm
-        settings.set_key(settings.__encryption_method__, settings.__algorithm__, algorithm)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, algorithm)
         for character in response.json()['characters_replacements']:
             replacement = response.json()['characters_replacements'][character]
             config.generator.replace_character(character, replacement)
-            settings.set_key(settings.__characters_replacements__, character, replacement)
+            settings.set_key(settings.CHARACTERS_REPLACEMENTS, character, replacement)
     except requests.RequestException as e:
         raise Exception(f'Error fetching server settings: {str(e)}')

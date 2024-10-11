@@ -11,7 +11,7 @@ from app.backend import auth, vault
 from app.core import interface, logger, settings
 
 
-__version__: str = '0.20.0'
+__version__: str = '0.20.1'
 __author__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
@@ -82,56 +82,51 @@ def version_callback(value: bool) -> None:
 generator: PasswordGenerator = PasswordGenerator()
 
 
-def _init_files() -> None:
-    platform_name = platform.system()
-    if platform_name == 'Linux':
-        setup_xdg_variables()
-    paths = setup_paths(platform_name)
-    create_dirs(paths)
-
-    vault.configure(os.path.join(paths['data'], ".vault"))
-    logger.configure(os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log"))
-    settings.configure(os.path.join(paths['config'], "config.ini"))
-
-
-def _init_generator() -> None:
-    if auth.is_authenticated():
-        response = requests.get(f"{ENDPOINT}/generator", headers=auth.get_auth_header())
-        if response.status_code != 200:
-            raise Exception(response.text)
-        generator.algorithm = response.json().get("algorithm")
-        generator.shift = response.json().get("shift")
-        generator.multiplier = response.json().get("multiplier")
-        generator.key = response.json().get("key")
-        generator.prefix = response.json().get("prefix")
-        generator.postfix = response.json().get("postfix")
-        for key, value in response.json().get('characters_replacements', {}).items():
-            generator.replace_character(key, value)
-    else:
-        generator.algorithm = settings.get_key(settings.__encryption_method__, settings.__algorithm__, DEFAULT_ALGORITHM)
-        generator.shift = int(settings.get_key(settings.__encryption_method__, settings.__shift__, DEFAULT_SHIFT))
-        generator.multiplier = int(settings.get_key(settings.__encryption_method__, settings.__multiplier__, DEFAULT_MULTIPLIER))
-        generator.key = settings.get_key(settings.__encryption_method__, settings.__key__, DEFAULT_KEY)
-        generator.prefix = settings.get_key(settings.__encryption_method__, settings.__prefix__, DEFAULT_PREFIX)
-        generator.postfix = settings.get_key(settings.__encryption_method__, settings.__postfix__, DEFAULT_POSTFIX)
-        for key, value in settings.get_settings(settings.__characters_replacements__).items():
-            generator.replace_character(key, value)
-
-
-def _init_settings() -> None:
-    settings.set_key(settings.__encryption_method__, settings.__algorithm__, generator.algorithm)
-    settings.set_key(settings.__encryption_method__, settings.__shift__, str(generator.shift))
-    settings.set_key(settings.__encryption_method__, settings.__multiplier__, str(generator.multiplier))
-    settings.set_key(settings.__encryption_method__, settings.__key__, generator.key)
-    for key, value in generator.characters_replacements.items():
-        settings.set_key(settings.__characters_replacements__, key, value)
-    settings.save_settings()
-
 
 def init_configurations() -> None:
     try:
-        _init_files()
-        _init_generator()
-        _init_settings()
+        platform_name = platform.system()
+        if platform_name == 'Linux':
+            setup_xdg_variables()
+        paths = setup_paths(platform_name)
+        create_dirs(paths)
+
+        vault.configure(os.path.join(paths['data'], ".vault"))
+        logger.configure(os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log"))
+        settings.configure(os.path.join(paths['config'], "config.ini"))
+
+        settings.set_section(settings.ENCRYPTION_METHOD)
+        settings.set_section(settings.CHARACTERS_REPLACEMENTS)
+        settings.set_section(settings.AUTH)
+
+        if auth.is_authenticated():
+            response = requests.get(f"{ENDPOINT}/generator", headers=auth.get_auth_header())
+            if response.status_code != 200:
+                raise Exception(response.text)
+            generator.algorithm = response.json().get("algorithm")
+            generator.shift = response.json().get("shift")
+            generator.multiplier = response.json().get("multiplier")
+            generator.key = response.json().get("key")
+            generator.prefix = response.json().get("prefix")
+            generator.postfix = response.json().get("postfix")
+            for key, value in response.json().get('characters_replacements', {}).items():
+                generator.replace_character(key, value)
+        else:
+            generator.algorithm = settings.get_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, DEFAULT_ALGORITHM)
+            generator.shift = int(settings.get_key(settings.ENCRYPTION_METHOD, settings.SHIFT, DEFAULT_SHIFT))
+            generator.multiplier = int(settings.get_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, DEFAULT_MULTIPLIER))
+            generator.key = settings.get_key(settings.ENCRYPTION_METHOD, settings.KEY, DEFAULT_KEY)
+            generator.prefix = settings.get_key(settings.ENCRYPTION_METHOD, settings.PREFIX, DEFAULT_PREFIX)
+            generator.postfix = settings.get_key(settings.ENCRYPTION_METHOD, settings.POSTFIX, DEFAULT_POSTFIX)
+            for key, value in settings.get_settings(settings.CHARACTERS_REPLACEMENTS).items():
+                generator.replace_character(key, value)
+
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, generator.algorithm)
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.SHIFT, str(generator.shift))
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, str(generator.multiplier))
+        settings.set_key(settings.ENCRYPTION_METHOD, settings.KEY, generator.key)
+        for key, value in generator.characters_replacements.items():
+            settings.set_key(settings.CHARACTERS_REPLACEMENTS, key, value)
+        settings.save_settings()
     except Exception as e:
         interface.display_error(f"{e}")

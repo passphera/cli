@@ -6,19 +6,19 @@ FILE: str | None = None
 
 
 # sections
-__auth__: str = "Authentication"
-__encryption_method__: str = "Encryption Method"
-__characters_replacements__: str = "Characters Replacements"
+AUTH: str = "Authentication"
+ENCRYPTION_METHOD: str = "Encryption Method"
+CHARACTERS_REPLACEMENTS: str = "Characters Replacements"
 
 
 # keys
-__access_token__: str = "access-token"
-__shift__: str = "shift-amount"
-__multiplier__: str = "multiplier-amount"
-__key__: str = "cipher-key"
-__prefix__: str = "prefix"
-__postfix__: str = "postfix"
-__algorithm__: str = "primary-algorithm"
+ACCESS_TOKEN: str = "access-token"
+SHIFT: str = "shift-amount"
+MULTIPLIER: str = "multiplier-amount"
+KEY: str = "cipher-key"
+PREFIX: str = "prefix"
+POSTFIX: str = "postfix"
+ALGORITHM: str = "primary-algorithm"
 
 
 __config: ConfigParser = ConfigParser()
@@ -54,6 +54,11 @@ def set_key(section: str, key: str, value: str) -> None:
 def delete_key(section: str, key: str) -> None:
     __config.remove_option(section, key)
     save_settings()
+
+
+def set_section(section: str) -> None:
+    if not __config.has_section(section):
+        __config.add_section(section)
 
 
 def delete_section(section: str) -> None:
