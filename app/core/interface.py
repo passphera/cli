@@ -1,7 +1,10 @@
 from typing import Any
 
 import pyperclip
+from typer import style, colors
 from typer.rich_utils import Console, Panel, Table
+
+from app.core import config
 
 
 console: Console = Console()
@@ -76,11 +79,18 @@ def display_replacement_error_message(replacement: str) -> None:
 
 
 def display_error(error: str) -> None:
-    _display_panel(f"[red]There is an error: {error}")
+    console.print(f"[red]There is an error: {error}")
 
 
 def display_message(message: str) -> None:
-    _display_panel(message)
+    console.print(message)
+
+
+def display_version() -> None:
+    info = f"""Version: {config.__version__}
+Maintainer: {config.__maintainer__}
+Email: {config.__email__}"""
+    _display_panel(info, title="Version")
 
 
 def get_text() -> str:

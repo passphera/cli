@@ -2,6 +2,7 @@ import os
 import platform
 from datetime import datetime as dt
 
+from dotenv import load_dotenv
 import requests
 import typer
 
@@ -11,11 +12,12 @@ from app.backend import auth, vault
 from app.core import interface, logger, settings
 
 
-__version__: str = '0.20.1'
-__author__: str = 'Fathi Abdelmalek'
+load_dotenv()
+
+
+__version__: str = '0.21.0'
+__maintainer__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
-__url__: str = 'https://github.com/passphera/cli'
-__status__: str = 'Development'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 
 DEFAULT_SHIFT: str = "3"
@@ -26,7 +28,7 @@ DEFAULT_POSTFIX: str = "postfix"
 DEFAULT_ALGORITHM: str = "hill"
 TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
-ENDPOINT: str = "http://0.0.0.0:8000/api/v1"
+ENDPOINT: str = os.getenv("ENDPOINT")
 
 
 def setup_xdg_variables() -> None:
@@ -75,12 +77,11 @@ def create_dirs(paths: dict[str, str]) -> None:
 
 def version_callback(value: bool) -> None:
     if value:
-        print(typer.style(f"Version {__version__}", fg=typer.colors.CYAN, bold=True))
+        interface.display_version()
         raise typer.Exit()
 
 
 generator: PasswordGenerator = PasswordGenerator()
-
 
 
 def init_configurations() -> None:
