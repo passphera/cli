@@ -9,13 +9,14 @@ import typer
 from passphera_core import PasswordGenerator
 
 from app.backend import auth, vault
-from app.core import interface, logger, settings
+from app.core import logger, settings
+from app.core.interface import Interface, Messages
 
 
 load_dotenv()
 
 
-__version__: str = '0.21.0'
+__version__: str = '1.0.0'
 __maintainer__: str = 'Fathi Abdelmalek'
 __email__: str = 'passphera@gmail.com'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
@@ -77,7 +78,7 @@ def create_dirs(paths: dict[str, str]) -> None:
 
 def version_callback(value: bool) -> None:
     if value:
-        interface.display_version()
+        Interface.display_version()
         raise typer.Exit()
 
 
@@ -130,4 +131,4 @@ def init_configurations() -> None:
             settings.set_key(settings.CHARACTERS_REPLACEMENTS, key, value)
         settings.save_settings()
     except Exception as e:
-        interface.display_error(f"{e}")
+        Interface.display_message(str(Messages.error(str(e))), title='error', style='error')

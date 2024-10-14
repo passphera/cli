@@ -34,20 +34,14 @@ def add_to_db(text: str, context: str, password: str) -> None:
     db.insert(data)
 
 
-def get_password(context: str) -> dict[str, str]:
+def get_password(context: str) -> dict[str, str] | None:
     password: dict[str, str]
-    try:
-        if auth.is_authenticated():
-            response = requests.get(f'{config.ENDPOINT}/passwords/{context}', headers=auth.get_auth_header())
-            print(response.json())
-            if response.status_code != 200:
-                raise ValueError
+    if auth.is_authenticated():
+        response = requests.get(f'{config.ENDPOINT}/passwords/{context}', headers=auth.get_auth_header())
+        if response.status_code == 200:
             return response.json()
-    except ValueError:
-        result = db.search(Password.context == context)
-        print(result[0])
-        if not result:
-            raise ValueError
+    result = db.search(Password.context == context)
+    if result:
         return dict(result[0])
 
 
@@ -55,10 +49,9 @@ def get_passwords() -> list[dict[str, str]]:
     all_passwords: dict[str, dict[str, str]] = {}
     if auth.is_authenticated():
         response = requests.get(f'{config.ENDPOINT}/passwords', headers=auth.get_auth_header())
-        if response.status_code != 200:
-            raise Exception(response.text)
-        for password in response.json():
-            all_passwords[password['context']] = password
+        if response.status_code == 200:
+            for password in response.json():
+                all_passwords[password['context']] = password
     local_passwords = db.all()
     if local_passwords:
         for password in local_passwords:

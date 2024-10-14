@@ -3,6 +3,8 @@ from app.core.config import generator
 
 
 def generate_password(text: str, context: str = '') -> str:
+    if vault.get_password(context):
+        raise Exception("Password already exists")
     password = generator.generate_password(text)
     if context != '':
         vault.add_to_db(text, context, password)
@@ -10,6 +12,8 @@ def generate_password(text: str, context: str = '') -> str:
 
 
 def update_password(context: str, text: str) -> str:
+    if not vault.get_password(context):
+        raise Exception("Password don't exist")
     password = generator.generate_password(text)
     vault.update_password(text, context, password)
     return password
@@ -17,7 +21,6 @@ def update_password(context: str, text: str) -> str:
 
 def delete_password(context: str) -> dict[str, str]:
     password: dict[str, str] | None = vault.get_password(context)
-    print(password)
     if not vault.delete_password(context):
-        raise Exception
+        raise Exception("Password don't exist")
     return password

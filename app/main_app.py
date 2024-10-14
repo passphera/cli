@@ -1,12 +1,12 @@
 import typer
 
-from app.cli import passwords, settings, vault, auth
+from app.cli import passwords, generator, vault, auth
 from app.core import config
 
 
 app: typer.Typer = typer.Typer(rich_markup_mode="rich")
 app.add_typer(passwords.app, name="passwords")
-app.add_typer(settings.app, name="settings")
+app.add_typer(generator.app, name="generator")
 app.add_typer(vault.app, name="vault")
 app.add_typer(auth.app, name="auth")
 

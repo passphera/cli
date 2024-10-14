@@ -10,13 +10,18 @@ app = typer.Typer(rich_markup_mode="rich")
 
 @app.callback()
 def auth_callback(ctx: typer.Context) -> None:
-    """Manage authentication (signup, login, logout)"""
+    """Manage authentication: signup, login, logout."""
 
 
 @app.command()
 def login(
-        email: Annotated[str, typer.Option("-e", "--email", prompt=True)],
-        password: Annotated[str, typer.Option("-p", "--password", prompt=True, hide_input=True)],
+        email: Annotated[str, typer.Option("-e", "--email",
+                                           prompt=True, show_default=False,
+                                           help="Email address to login."),],
+        password: Annotated[str, typer.Option("-p", "--password",
+                                              prompt=True, show_default=False,
+                                              hide_input=True,
+                                              help="Password to login."),],
 ) -> None:
     """Login to the app server"""
     functions.login(email, password)
@@ -30,13 +35,17 @@ def logout() -> None:
 
 @app.command()
 def signup(
-        email: Annotated[str, typer.Option("-e", "--email", prompt=True)],
-        username: Annotated[str, typer.Option("-n", "--username", prompt=True)],
+        email: Annotated[str, typer.Option("-e", "--email",
+                                           prompt=True, show_default=False,
+                                           help="Email address.")],
+        username: Annotated[str, typer.Option("-n", "--username",
+                                              prompt=True, show_default=False,
+                                              help="Username.")],
         password: Annotated[str, typer.Option("-p",
                                               "--password",
-                                              prompt=True,
-                                              hide_input=True,
-                                              confirmation_prompt=True
+                                              prompt=True, show_default=False,
+                                              hide_input=True, confirmation_prompt=True,
+                                              help="Password."
                                               )],
 ) -> None:
     """Register new user on the app server"""

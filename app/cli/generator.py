@@ -9,8 +9,8 @@ app = typer.Typer(rich_markup_mode="rich")
 
 
 @app.callback()
-def settings_callback(ctx: typer.Context) -> None:
-    """Manage configurations, configure the ciphering settings (shift amount, characters replacements, etc...)"""
+def generator_callback(ctx: typer.Context) -> None:
+    """Manage generator: configure the ciphering settings (shift amount, characters replacements, etc...)"""
 
 
 @app.command()
@@ -21,7 +21,7 @@ def get_shift() -> None:
 
 @app.command()
 def change_shift(
-        amount: Annotated[int, typer.Argument(help="The amount to shift to")],
+        amount: Annotated[int, typer.Argument(show_default=False, help="Amount to shift to.")],
 ) -> None:
     """Change ciphering shift amount"""
     functions.change_shift(amount)
@@ -41,7 +41,7 @@ def get_multiplier() -> None:
 
 @app.command()
 def change_multiplier(
-        value: Annotated[int, typer.Argument(help="The value to multiply by")],
+        value: Annotated[int, typer.Argument(show_default=False, help="Value to multiply by.")],
 ) -> None:
     """Change ciphering multiplier value"""
     functions.change_multiplier(value)
@@ -61,7 +61,7 @@ def get_key() -> None:
 
 @app.command()
 def change_key(
-        key: Annotated[str, typer.Argument(help="The key to use in encryption")]
+        key: Annotated[str, typer.Argument(show_default=False, help="Key to use in encryption.")]
 ) -> None:
     """Change ciphering key"""
     functions.change_key(key)
@@ -81,7 +81,7 @@ def get_prefix() -> None:
 
 @app.command()
 def change_prefix(
-        prefix: Annotated[str, typer.Argument(help="Text prefix")],
+        prefix: Annotated[str, typer.Argument(show_default=False, help="Text prefix.")],
 ) -> None:
     """Change ciphering prefix"""
     functions.change_prefix(prefix)
@@ -101,7 +101,7 @@ def get_postfix() -> None:
 
 @app.command()
 def change_postfix(
-        postfix: Annotated[str, typer.Argument(help="Text postfix")],
+        postfix: Annotated[str, typer.Argument(show_default=False, help="Text postfix.")],
 ) -> None:
     """Change ciphering postfix"""
     functions.change_postfix(postfix)
@@ -121,7 +121,7 @@ def get_algorithm() -> None:
 
 @app.command()
 def change_algorithm(
-        algorithm_name: Annotated[str, typer.Argument(help="Primary algorithm name")],
+        algorithm_name: Annotated[str, typer.Argument(show_default=False, help="Primary algorithm name.")],
 ) -> None:
     """Change ciphering primary algorithm"""
     functions.change_algorithm(algorithm_name)
@@ -141,8 +141,10 @@ def get_replacements() -> None:
 
 @app.command()
 def replace_character(
-        character: Annotated[str, typer.Argument(help="Character to be replaced (should be one character)")],
-        replacement: Annotated[str, typer.Argument(help="The replacement string (should not contain spaces)")],
+        character: Annotated[str, typer.Argument(show_default=False,
+                                                 help="Character to be replaced (one character).")],
+        replacement: Annotated[str, typer.Argument(show_default=False,
+                                                   help="The replacement string (without spaces).")],
 ) -> None:
     """Replace character with a replacement string"""
     functions.replace_character(character, replacement)
@@ -150,7 +152,7 @@ def replace_character(
 
 @app.command()
 def reset_replacement(
-        character: Annotated[str, typer.Argument(help="Character to reset it")]
+        character: Annotated[str, typer.Argument(help="Character to reset it.")]
 ) -> None:
     """Reset a character's replacement"""
     functions.reset_replacement(character)
@@ -159,7 +161,7 @@ def reset_replacement(
 @app.command()
 def sync() -> None:
     """Sync local settings with cloud settings id logged in"""
-    functions.sync_settings()
+    functions.sync_generator()
 
 
 if __name__ == "__main__":

@@ -9,12 +9,12 @@ app = typer.Typer(rich_markup_mode="rich")
 
 
 @app.callback()
-def history_callback(ctx: typer.Context) -> None:
-    """Access history, get password or passwords, save/load history data to a backup, hash passwords on history."""
+def vault_callback(ctx: typer.Context) -> None:
+    """Access vault: get password or passwords, clear vault, sync vault data with cloud."""
 
 
 @app.command()
-def get(context: Annotated[str, typer.Argument(help="The context to get it's password")]) -> None:
+def get(context: Annotated[str, typer.Argument(show_default=False, help="Context of password to get.")]) -> None:
     """Get saved password"""
     functions.get_password(context)
 

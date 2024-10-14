@@ -2,275 +2,254 @@ import typer
 
 from passphera_core import InvalidAlgorithmException
 
-from app.backend import auth, vault, settings, passwords
-from app.core import interface, logger
+from app.backend import auth, vault, generator, passwords
+from app.core import logger
+from app.core.interface import Interface, Messages
+
+
+def _handle_error(message: str) -> None:
+    Interface.display_message(str(Messages.error(message)), title='error', style='error')
+    logger.log_error(message)
 
 
 # auth
 def login(email: str, password: str) -> None:
     try:
         auth.login(email, password)
-        interface.display_message("logged in successfully")
+        Interface.display_message("logged in successfully", title='login', style='success')
         logger.log_info(f"logged in with user email {email}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to login: {e}")
 
 
 def logout() -> None:
     try:
         auth.logout()
-        interface.display_message("logged out successfully")
+        Interface.display_message("logged out successfully", title='logout', style='success')
         logger.log_info("user logged out")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to logout: {e}")
 
 
 def signup(email: str, username: str, password: str) -> None:
     try:
         auth.signup(email, username, password)
-        interface.display_message("user registered successfully")
+        Interface.display_message("user registered successfully", title='signup', style='success')
         logger.log_info("registered new user in the app server")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to signup: {e}")
 
 
 def whoami() -> None:
     try:
-        interface.display_user_info(auth.get_auth_user())
+        Interface.display_user_info(auth.get_auth_user())
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get user: {e}")
 
 
-# settings
+# generator
 def get_algorithm() -> None:
     try:
-        interface.display_message(f"Algorithm: {settings.get_algorithm()}")
+        Interface.display_message(f"Algorithm: {generator.get_algorithm()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get algorithm: {e}")
 
 
 def change_algorithm(algorithm: str) -> None:
     try:
-        settings.change_algorithm(algorithm)
-        interface.display_message(f"Primary Algorithm has been changed to {algorithm}")
-        logger.log_info(f"Primary Algorithm has been changed to {algorithm}")
-    except InvalidAlgorithmException:
-        interface.display_error("Invalid algorithm name")
-        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
+        generator.change_algorithm(algorithm)
+        Interface.display_message(f"Primary Algorithm has been changed to {algorithm}")
+        logger.log_info(f"primary algorithm changed to {algorithm}")
+    except InvalidAlgorithmException as e:
+        Interface.display_message(str(Messages.error("Invalid algorithm name")), title='error', style='error')
+        logger.log_error(f"failed to change primary algorithm to {algorithm}: {e}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change primary algorithm to {algorithm}")
+        _handle_error(f"failed to change primary algorithm to {algorithm}: {e}")
 
 
 def reset_algorithm() -> None:
     try:
-        settings.reset_algorithm()
-        interface.display_message("Primary Algorithm has been changed to default")
-        logger.log_info("Primary Algorithm has been changed to default")
+        generator.reset_algorithm()
+        Interface.display_message("Primary Algorithm has been changed to default")
+        logger.log_info("primary Algorithm has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset algorithm to default")
+        _handle_error(f"failed to reset primary algorithm: {e}")
 
 
 def get_shift() -> None:
     try:
-        interface.display_message(f"Shift amount: {settings.get_shift()}")
+        Interface.display_message(f"Shift amount: {generator.get_shift()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get shift: {e}")
 
 
 def change_shift(amount: int) -> None:
     try:
-        settings.change_shift(amount)
-        interface.display_message(f"Shift has been changed to {amount}")
-        logger.log_info(f"Shift has been changed to {amount}")
+        generator.change_shift(amount)
+        Interface.display_message(f"Shift has been changed to {amount}")
+        logger.log_info(f"shift changed to {amount}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change shift to {amount}")
+        _handle_error(f"failed to change shift to {amount}: {e}")
 
 
 def reset_shift() -> None:
     try:
-        settings.reset_shift()
-        interface.display_message("Shift has been changed to default")
-        logger.log_info("Shift has been changed to default")
+        generator.reset_shift()
+        Interface.display_message("Shift has been changed to default")
+        logger.log_info("shift has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset shift to default")
+        _handle_error(f"failed to reset shift: {e}")
 
 
 def get_multiplier() -> None:
     try:
-        interface.display_message(f"Multiplier value: {settings.get_multiplier()}")
+        Interface.display_message(f"Multiplier value: {generator.get_multiplier()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get multiplier: {e}")
 
 
 def change_multiplier(value: int) -> None:
     try:
-        settings.change_multiplier(value)
-        interface.display_message(f"Multiplier has been changed to {value}")
-        logger.log_info(f"Multiplier has been changed to {value}")
+        generator.change_multiplier(value)
+        Interface.display_message(f"Multiplier has been changed to {value}")
+        logger.log_info(f"multiplier changed to {value}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change multiplier to {value}")
+        _handle_error(f"failed to change multiplier to {value}: {e}")
 
 
 def reset_multiplier() -> None:
     try:
-        settings.reset_multiplier()
-        interface.display_message("Multiplier has been changed to default")
-        logger.log_info("Multiplier has been changed to default")
+        generator.reset_multiplier()
+        Interface.display_message("Multiplier has been changed to default")
+        logger.log_info("multiplier has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset multiplier to default")
+        _handle_error(f"failed to reset multiplier: {e}")
 
 
 def get_key() -> None:
     try:
-        interface.display_message(f"Key: {settings.get_key()}")
+        Interface.display_message(f"Key: {generator.get_key()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get key: {e}")
 
 
 def change_key(key: str) -> None:
     try:
-        settings.change_key(key)
-        interface.display_message(f"Key has been changed to {key}")
-        logger.log_info(f"Changed key to {key}")
+        generator.change_key(key)
+        Interface.display_message(f"Key has been changed to {key}")
+        logger.log_info(f"key changed to {key}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change key to {key}")
+        _handle_error(f"failed to change key to {key}: {e}")
 
 
 def reset_key() -> None:
     try:
-        settings.reset_key()
-        interface.display_message("Key has been changed to default")
-        logger.log_info("Key has been changed to default")
+        generator.reset_key()
+        Interface.display_message("Key has been changed to default")
+        logger.log_info("key has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset key to default")
+        _handle_error(f"failed to reset key: {e}")
 
 
 def get_prefix() -> None:
     try:
-        interface.display_message(f"Prefix: {settings.get_prefix()}")
+        Interface.display_message(f"Prefix: {generator.get_prefix()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get prefix: {e}")
 
 
 def change_prefix(prefix: str) -> None:
     try:
-        settings.change_prefix(prefix)
-        interface.display_message(f"Prefix has been changed to {prefix}")
-        logger.log_info(f"Changed prefix to {prefix}")
+        generator.change_prefix(prefix)
+        Interface.display_message(f"Prefix has been changed to {prefix}")
+        logger.log_info(f"prefix changed to {prefix}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change prefix to {prefix}")
+        _handle_error(f"failed to change prefix to {prefix}: {e}")
 
 
 def reset_prefix() -> None:
     try:
-        settings.reset_prefix()
-        interface.display_message("Prefix has been changed to default")
-        logger.log_info("Prefix has been changed to default")
+        generator.reset_prefix()
+        Interface.display_message("Prefix has been changed to default")
+        logger.log_info("prefix has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset prefix to default")
+        _handle_error(f"failed to reset prefix: {e}")
 
 
 def get_postfix() -> None:
     try:
-        interface.display_message(f"Postfix: {settings.get_postfix()}")
+        Interface.display_message(f"Postfix: {generator.get_postfix()}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get postfix: {e}")
 
 
 def change_postfix(postfix: str) -> None:
     try:
-        settings.change_postfix(postfix)
-        interface.display_message(f"Postfix has been changed to {postfix}")
-        logger.log_info(f"Changed postfix to {postfix}")
+        generator.change_postfix(postfix)
+        Interface.display_message(f"Postfix has been changed to {postfix}")
+        logger.log_info(f"postfix changed to {postfix}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change postfix to {postfix}")
+        _handle_error(f"failed to change postfix to {postfix}: {e}")
 
 
 def reset_postfix() -> None:
     try:
-        settings.reset_postfix()
-        interface.display_message("Postfix has been changed to default")
-        logger.log_info("Postfix has been changed to default")
+        generator.reset_postfix()
+        Interface.display_message("Postfix has been reset")
+        logger.log_info("postfix has been reset")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error("Failed to reset postfix to default")
+        _handle_error(f"failed to reset postfix: {e}")
 
 
 def get_replacements() -> None:
     try:
-        replacements: dict[str, str] = settings.get_characters_replacements()
-        interface.display_character_replacements(replacements)
+        replacements: dict[str, str] = generator.get_characters_replacements()
+        Interface.display_character_replacements(replacements)
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get replacements: {e}")
 
 
 def replace_character(character: str, replacement: str) -> None:
     try:
-        settings.replace_character(character, replacement)
-        interface.display_message(f"Character {character} has been replaced with {replacement}")
-        logger.log_info(f"Character {character} has been replaced with {replacement}")
+        generator.replace_character(character, replacement)
+        Interface.display_message(f"Character '{character}' has been replaced with '{replacement}'")
+        logger.log_info(f"replace character '{character}' with '{replacement}'")
     except ValueError:
-        interface.display_replacement_error_message(replacement)
+        Interface.display_message(Messages.INVALID_REPLACEMENT, style='bold red')
         logger.log_error(f"failed to replace character '{character}' with '{replacement}'")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to change character '{character}' replacement to {replacement}")
+        _handle_error(f"failed to change character '{character}' with {replacement}: {e}")
 
 
 def reset_replacement(character: str) -> None:
     try:
-        settings.reset_replacement(character)
-        interface.display_message(f"Character {character}'s replacement has been removed")
-        logger.log_info(f"Character {character}'s replacement has been removed")
+        generator.reset_replacement(character)
+        Interface.display_message(f"Character {character}'s replacement has been removed")
+        logger.log_info(f"removed replacement for character {character}")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"Failed to reset character '{character}' replacement to default")
+        _handle_error(f"failed to reset character {character} replacement: {e}")
 
 
-def sync_settings() -> None:
+def sync_generator() -> None:
     try:
-        settings.sync()
-        interface.display_sync_settings_message()
-        logger.log_info("Settings synced successfully")
+        generator.sync()
+        Interface.display_message(Messages.SETTINGS_SYNCED)
+        logger.log_info("generator synced")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to sync generator: {e}")
 
 
 # passwords
 def generate_password(text: str, context: str = '') -> None:
     try:
         password: str = passwords.generate_password(text, context)
-        interface.display_password(password, text, context)
-        interface.copy_to_clipboard(password)
-        logger.log_info("new password generated successfully")
+        Interface.display_password(password, text, context)
+        Interface.copy_to_clipboard(password)
+        logger.log_info("new password generated")
         if context != '':
-            logger.log_info(f"new passwords saved using this context '{context}'")
+            logger.log_info(f"new passwords saved using context '{context}'")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to generate password: {e}")
 
 
 def update_password(context: str, text: str | None = None) -> None:
@@ -279,30 +258,25 @@ def update_password(context: str, text: str | None = None) -> None:
         if db_password is None:
             raise ValueError(f"entered unsaved password context {context}")
         if not text:
-            text: str = typer.prompt("Enter the text to encrypt (leave blank for old one)",
-                                     default=db_password['text'])
+            text: str = typer.prompt("Enter text to encrypt (optional)", default=db_password['text'])
         password = passwords.update_password(context, text)
-        interface.display_password(password, text, context)
-        interface.copy_to_clipboard(password)
-        logger.log_info("password updated successfully")
+        Interface.display_password(password, text, context)
+        Interface.copy_to_clipboard(password)
+        logger.log_info("saved password was updated")
     except ValueError as e:
-        interface.display_context_error_message(context)
-        logger.log_error(f"{e}")
+        _handle_error(str(e))
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to update password: {e}")
 
 
 def delete_password(context: str) -> None:
     try:
         entry: dict[str, str] = passwords.delete_password(context)
-        interface.display_password_removed_message()
-        interface.display_password(entry['context'], entry['text'], entry['password'])
-        logger.log_warning("saved password was removed from database")
+        Interface.display_message(Messages.PASSWORD_REMOVED)
+        Interface.display_password(entry['password'], entry['text'], entry['context'])
+        logger.log_warning("saved password was deleted")
     except ValueError as e:
-        interface.display_context_error_message(context)
-        logger.log_error(f"entered unsaved password context '{context}'")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to delete password: {e}")
 
 
 # vault
@@ -311,34 +285,34 @@ def get_password(context: str) -> None:
         password: dict[str, str] = vault.get_password(context)
         if password is None:
             raise ValueError
-        interface.display_password(password)
-        interface.copy_to_clipboard(password['password'])
+        Interface.display_password(password)
+        Interface.copy_to_clipboard(password['password'])
     except ValueError:
-        interface.display_context_error_message(context)
+        Interface.display_message(str(Messages.context_error(context)), style='error')
+    except Exception as e:
+        _handle_error(f"failed to get password: {e}")
 
 
 def get_all_passwords() -> None:
     try:
-        interface.display_passwords(vault.get_passwords())
+        Interface.display_passwords(vault.get_passwords())
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to get passwords: {e}")
 
 
 def clear_database() -> None:
     try:
         vault.clear_db()
-        interface.display_clear_history_message()
+        Interface.display_message(Messages.HISTORY_CLEARED)
+        logger.log_info("database cleared")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to clear database: {e}")
 
 
 def sync_vault() -> None:
     try:
         local, server = vault.sync()
-        interface.display_sync_vault_message(local, server)
-        logger.log_info("Database synced successfully")
+        Interface.display_message(str(Messages.sync_vault(local, server)))
+        logger.log_info("database synced")
     except Exception as e:
-        interface.display_error(f"{e}")
-        logger.log_error(f"{e}")
+        _handle_error(f"failed to sync vault: {e}")

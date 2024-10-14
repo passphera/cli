@@ -10,15 +10,17 @@ app = typer.Typer(rich_markup_mode="rich")
 
 @app.callback()
 def passwords_callback(ctx: typer.Context) -> None:
-    """Manage passwords, create, update, or delete passwords."""
+    """Manage passwords: create, update, or delete passwords."""
 
 
 @app.command()
 def generate(
         text: Annotated[str, typer.Option("-t", "--text",
                                           prompt="Enter the text to encrypt",
-                                          show_default=False)],
-        context: Annotated[Optional[str], typer.Option("-c", "--context")] = ''
+                                          show_default=False,
+                                          help="Text to encrypt.")],
+        context: Annotated[Optional[str], typer.Option("-c", "--context",
+                                                       help="Context to save the password.")] = ''
 ) -> None:
     """Generate new password (and optionally save it)"""
     if not context:
@@ -28,17 +30,17 @@ def generate(
 
 @app.command()
 def update(
-        context: Annotated[str, typer.Argument(help="The context of the password you want to update",
-                                               show_default=False)],
+        context: Annotated[str, typer.Argument(show_default=False, help="Context of password to update.")],
         text: Annotated[str, typer.Option("-t", "--text",
-                                          help="The text to encrypt [old one if blank]")] = '',
+                                          show_default=False,
+                                          help="Text to encrypt (optional).")] = '',
 ) -> None:
     """Update a saved password"""
     functions.update_password(context, text)
 
 
 @app.command()
-def delete(context: Annotated[str, typer.Argument(help="The context you want to update the password for")],) -> None:
+def delete(context: Annotated[str, typer.Argument(show_default=False, help="Context of password to update.")],) -> None:
     """Delete a saved password"""
     functions.delete_password(context)
 
