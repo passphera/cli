@@ -84,10 +84,10 @@ class Interface:
         info = Text()
         info.append("Version: ", style="highlight")
         info.append(config.__version__)
-        info.append("\nMaintainer: ", style="highlight")
-        info.append(config.__maintainer__)
+        info.append("\nAuthor: ", style="highlight")
+        info.append(config.__author__)
         info.append("\nEmail: ", style="highlight")
-        info.append(config.__email__)
+        info.append(config.__author_email__)
         console.print(cls._create_panel(info, "Version Information", "info"))
 
     @staticmethod

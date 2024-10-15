@@ -1,5 +1,4 @@
 passphera-core
-python-dotenv
 pycryptodome
 pyperclip
 requests

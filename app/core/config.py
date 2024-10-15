@@ -2,7 +2,6 @@ import os
 import platform
 from datetime import datetime as dt
 
-from dotenv import load_dotenv
 import requests
 import typer
 
@@ -13,12 +12,12 @@ from app.core import logger, settings
 from app.core.interface import Interface, Messages
 
 
-load_dotenv()
-
-
+__name__: str = 'passphera'
 __version__: str = '1.0.0'
-__maintainer__: str = 'Fathi Abdelmalek'
-__email__: str = 'passphera@gmail.com'
+__author__: str = 'Fathi Abdelmalek'
+__author_email__: str = 'passphera@gmail.com'
+__url__: str = 'https://github.com/passphera/cli'
+__license__: str = 'Apache-2.0'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 
 DEFAULT_SHIFT: str = "3"
@@ -29,7 +28,7 @@ DEFAULT_POSTFIX: str = "postfix"
 DEFAULT_ALGORITHM: str = "hill"
 TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
-ENDPOINT: str = os.getenv("ENDPOINT")
+ENDPOINT: str = 'https://passphera-api.koyeb.app/api/v1'
 
 
 def setup_xdg_variables() -> None:
