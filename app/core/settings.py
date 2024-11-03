@@ -5,22 +5,6 @@ from configparser import ConfigParser
 FILE: str | None = None
 
 
-# sections
-AUTH: str = "Authentication"
-ENCRYPTION_METHOD: str = "Encryption Method"
-CHARACTERS_REPLACEMENTS: str = "Characters Replacements"
-
-
-# keys
-ACCESS_TOKEN: str = "access-token"
-SHIFT: str = "shift-amount"
-MULTIPLIER: str = "multiplier-amount"
-KEY: str = "cipher-key"
-PREFIX: str = "prefix"
-POSTFIX: str = "postfix"
-ALGORITHM: str = "primary-algorithm"
-
-
 __config: ConfigParser = ConfigParser()
 
 

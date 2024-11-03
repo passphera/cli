@@ -3,12 +3,11 @@ import platform
 from datetime import datetime as dt
 
 import requests
-import typer
 
 from passphera_core import PasswordGenerator
 
 from app.backend import auth, vault
-from app.core import logger, settings
+from app.core import constants, logger, settings
 from app.core.interface import Interface, Messages
 
 
@@ -20,15 +19,8 @@ __url__: str = 'https://github.com/passphera/cli'
 __license__: str = 'Apache-2.0'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 
-DEFAULT_SHIFT: str = "3"
-DEFAULT_MULTIPLIER: str = "3"
-DEFAULT_KEY: str = "hill"
-DEFAULT_PREFIX: str = "prefix"
-DEFAULT_POSTFIX: str = "postfix"
-DEFAULT_ALGORITHM: str = "hill"
-TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
-ENDPOINT: str = 'https://passphera-api.koyeb.app/api/v1'
+generator: PasswordGenerator = PasswordGenerator()
 
 
 def setup_xdg_variables() -> None:
@@ -75,15 +67,6 @@ def create_dirs(paths: dict[str, str]) -> None:
             os.makedirs(path)
 
 
-def version_callback(value: bool) -> None:
-    if value:
-        Interface.display_version()
-        raise typer.Exit()
-
-
-generator: PasswordGenerator = PasswordGenerator()
-
-
 def init_configurations() -> None:
     try:
         platform_name = platform.system()
@@ -96,12 +79,12 @@ def init_configurations() -> None:
         logger.configure(os.path.join(paths['cache'], f"log_{dt.now().strftime('%Y-%m-%d')}.log"))
         settings.configure(os.path.join(paths['config'], "config.ini"))
 
-        settings.set_section(settings.ENCRYPTION_METHOD)
-        settings.set_section(settings.CHARACTERS_REPLACEMENTS)
-        settings.set_section(settings.AUTH)
+        settings.set_section(constants.ENCRYPTION_METHOD)
+        settings.set_section(constants.CHARACTERS_REPLACEMENTS)
+        settings.set_section(constants.AUTH)
 
         if auth.is_authenticated():
-            response = requests.get(f"{ENDPOINT}/generator", headers=auth.get_auth_header())
+            response = requests.get(f"{constants.ENDPOINT}/generator", headers=auth.get_auth_header())
             if response.status_code != 200:
                 raise Exception(response.text)
             generator.algorithm = response.json().get("algorithm")
@@ -113,21 +96,21 @@ def init_configurations() -> None:
             for key, value in response.json().get('characters_replacements', {}).items():
                 generator.replace_character(key, value)
         else:
-            generator.algorithm = settings.get_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, DEFAULT_ALGORITHM)
-            generator.shift = int(settings.get_key(settings.ENCRYPTION_METHOD, settings.SHIFT, DEFAULT_SHIFT))
-            generator.multiplier = int(settings.get_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, DEFAULT_MULTIPLIER))
-            generator.key = settings.get_key(settings.ENCRYPTION_METHOD, settings.KEY, DEFAULT_KEY)
-            generator.prefix = settings.get_key(settings.ENCRYPTION_METHOD, settings.PREFIX, DEFAULT_PREFIX)
-            generator.postfix = settings.get_key(settings.ENCRYPTION_METHOD, settings.POSTFIX, DEFAULT_POSTFIX)
-            for key, value in settings.get_settings(settings.CHARACTERS_REPLACEMENTS).items():
+            generator.algorithm = settings.get_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, constants.DEFAULT_ALGORITHM)
+            generator.shift = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.SHIFT, constants.DEFAULT_SHIFT))
+            generator.multiplier = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.MULTIPLIER, constants.DEFAULT_MULTIPLIER))
+            generator.key = settings.get_key(constants.ENCRYPTION_METHOD, constants.KEY, constants.DEFAULT_KEY)
+            generator.prefix = settings.get_key(constants.ENCRYPTION_METHOD, constants.PREFIX, constants.DEFAULT_PREFIX)
+            generator.postfix = settings.get_key(constants.ENCRYPTION_METHOD, constants.POSTFIX, constants.DEFAULT_POSTFIX)
+            for key, value in settings.get_settings(constants.CHARACTERS_REPLACEMENTS).items():
                 generator.replace_character(key, value)
 
-        settings.set_key(settings.ENCRYPTION_METHOD, settings.ALGORITHM, generator.algorithm)
-        settings.set_key(settings.ENCRYPTION_METHOD, settings.SHIFT, str(generator.shift))
-        settings.set_key(settings.ENCRYPTION_METHOD, settings.MULTIPLIER, str(generator.multiplier))
-        settings.set_key(settings.ENCRYPTION_METHOD, settings.KEY, generator.key)
+        settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, generator.algorithm)
+        settings.set_key(constants.ENCRYPTION_METHOD, constants.SHIFT, str(generator.shift))
+        settings.set_key(constants.ENCRYPTION_METHOD, constants.MULTIPLIER, str(generator.multiplier))
+        settings.set_key(constants.ENCRYPTION_METHOD, constants.KEY, generator.key)
         for key, value in generator.characters_replacements.items():
-            settings.set_key(settings.CHARACTERS_REPLACEMENTS, key, value)
+            settings.set_key(constants.CHARACTERS_REPLACEMENTS, key, value)
         settings.save_settings()
     except Exception as e:
         Interface.display_message(str(Messages.error(str(e))), title='error', style='error')

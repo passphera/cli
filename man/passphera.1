@@ -1,0 +1,185 @@
+.TH PASSPHERA 1 "November 2024" "1.0.0" "User Commands"
+
+.SH NAME
+passphera \- strong passwords generator and manager
+
+.SH SYNOPSIS
+.B passphera
+[\fB\-v\fR|\fB\-\-version\fR]
+[\fB\-h\fR|\fB\-\-help\fR]
+\fBCOMMAND\fR
+[\fIARGS\fR...]
+
+.SH DESCRIPTION
+.B passphera
+is a command-line tool for generating and managing strong passwords using cryptographic algorithms. It offers customizable encryption settings, local password storage, and cloud synchronization capabilities.
+
+.SH COMMANDS
+
+.SS Authentication Commands
+.TP
+.B auth login \-e \fIEMAIL\fR \-p \fIPASSWORD\fR
+Login to the app server
+.TP
+.B auth logout
+Logout from the current session
+.TP
+.B auth signup \-e \fIEMAIL\fR \-n \fIUSERNAME\fR \-p \fIPASSWORD\fR
+Register new user
+.TP
+.B auth whoami
+Display current user credentials
+
+.SS Generator Commands
+.TP
+.B generator change-algorithm \fIALGORITHM\fR
+Change primary encryption algorithm
+.TP
+.B generator change-key \fIKEY\fR
+Set encryption key
+.TP
+.B generator change-multiplier \fIVALUE\fR
+Set multiplication factor
+.TP
+.B generator change-postfix \fIPOSTFIX\fR
+Set text postfix
+.TP
+.B generator change-prefix \fIPREFIX\fR
+Set text prefix
+.TP
+.B generator change-shift \fIAMOUNT\fR
+Set character shift amount
+.TP
+.B generator get-algorithm
+Show current algorithm
+.TP
+.B generator get-key
+Show current key
+.TP
+.B generator get-multiplier
+Show current multiplier
+.TP
+.B generator get-postfix
+Show current postfix
+.TP
+.B generator get-prefix
+Show current prefix
+.TP
+.B generator get-replacements
+Show all character replacements
+.TP
+.B generator get-shift
+Show current shift amount
+.TP
+.B generator replace-character \fICHARACTER\fR \fIREPLACEMENT\fR
+Set character replacement
+.TP
+.B generator reset-algorithm
+Reset algorithm to default
+.TP
+.B generator reset-key
+Reset key to default
+.TP
+.B generator reset-multiplier
+Reset multiplier to default
+.TP
+.B generator reset-postfix
+Reset postfix to default
+.TP
+.B generator reset-prefix
+Reset prefix to default
+.TP
+.B generator reset-replacement \fICHARACTER\fR
+Reset specific character replacement
+.TP
+.B generator reset-shift
+Reset shift amount to default
+.TP
+.B generator sync
+Sync settings with cloud
+
+.SS Password Management Commands
+.TP
+.B passwords delete \fICONTEXT\fR
+Delete saved password
+.TP
+.B passwords generate \-t \fITEXT\fR [\-c \fICONTEXT\fR]
+Generate new password and optionally save it
+.TP
+.B passwords update \fICONTEXT\fR [\-t \fITEXT\fR]
+Update existing password
+
+.SS Vault Commands
+.TP
+.B vault clear
+Clear all saved passwords
+.TP
+.B vault get \fICONTEXT\fR
+Retrieve specific password
+.TP
+.B vault get-all
+List all saved passwords
+.TP
+.B vault sync
+Synchronize with cloud storage
+
+.SH OPTIONS
+.TP
+.BR \-v ", " \-\-version
+Show program version
+.TP
+.BR \-h ", " \-\-help
+Show help message
+
+.SH EXAMPLES
+.PP
+Login to account:
+.PP
+.nf
+.RS
+passphera auth login -e user@example.com -p mypassword
+.RE
+.fi
+.PP
+Generate and save a password:
+.PP
+.nf
+.RS
+passphera passwords generate -t "master_key" -c "github"
+.RE
+.fi
+.PP
+Configure encryption settings:
+.PP
+.nf
+.RS
+passphera generator change-algorithm playfair
+passphera generator change-key mysecretkey
+passphera generator change-shift 5
+.RE
+.fi
+.PP
+Retrieve a saved password:
+.PP
+.nf
+.RS
+passphera vault get "github"
+.RE
+.fi
+
+.SH FILES
+.TP
+.I ~/.config/passphera/cli/config.ini
+User configuration file
+.TP
+.I ~/.local/share/passphera/cli/.vault
+Local password vault database
+
+.SH BUGS
+Report bugs at: https://github.com/passphera/cli/issues
+
+.SH AUTHOR
+Fathi Abdelmalek <passphera@gmail.com>
+
+.SH COPYRIGHT
+Copyright © 2024 Fathi Abdelmalek. Licensed under Apache License 2.0.
