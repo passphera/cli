@@ -28,12 +28,12 @@ def get_algorithm() -> None:
 
 
 @app.command()
-def change_algorithm(
+def set_algorithm(
         algorithm: Annotated[str, typer.Argument(show_default=False, help="Primary algorithm name.")],
 ) -> None:
     """Change ciphering primary algorithm"""
     try:
-        generator.change_algorithm(algorithm)
+        generator.set_algorithm(algorithm)
         Interface.display_message(f"Primary Algorithm has been changed to {algorithm}", title="Generator Settings")
         logger.log_info(f"primary algorithm changed to {algorithm}")
     except InvalidAlgorithmException as e:
@@ -64,12 +64,12 @@ def get_shift() -> None:
 
 
 @app.command()
-def change_shift(
+def set_shift(
         amount: Annotated[int, typer.Argument(show_default=False, help="Amount to shift to.")],
 ) -> None:
     """Change ciphering shift amount"""
     try:
-        generator.change_shift(amount)
+        generator.set_shift(amount)
         Interface.display_message(f"Shift has been changed to {amount}", title="Generator Settings")
         logger.log_info(f"shift changed to {amount}")
     except Exception as e:
@@ -97,12 +97,12 @@ def get_multiplier() -> None:
 
 
 @app.command()
-def change_multiplier(
+def set_multiplier(
         value: Annotated[int, typer.Argument(show_default=False, help="Value to multiply by.")],
 ) -> None:
     """Change ciphering multiplier value"""
     try:
-        generator.change_multiplier(value)
+        generator.set_multiplier(value)
         Interface.display_message(f"Multiplier has been changed to {value}", title="Generator Settings")
         logger.log_info(f"multiplier changed to {value}")
     except Exception as e:
@@ -130,12 +130,12 @@ def get_key() -> None:
 
 
 @app.command()
-def change_key(
+def set_key(
         key: Annotated[str, typer.Argument(show_default=False, help="Key to use in encryption.")]
 ) -> None:
     """Change ciphering key"""
     try:
-        generator.change_key(key)
+        generator.set_key(key)
         Interface.display_message(f"Key has been changed to {key}", title="Generator Settings")
         logger.log_info(f"key changed to {key}")
     except Exception as e:
@@ -163,12 +163,12 @@ def get_prefix() -> None:
 
 
 @app.command()
-def change_prefix(
+def set_prefix(
         prefix: Annotated[str, typer.Argument(show_default=False, help="Text prefix.")],
 ) -> None:
     """Change ciphering prefix"""
     try:
-        generator.change_prefix(prefix)
+        generator.set_prefix(prefix)
         Interface.display_message(f"Prefix has been changed to {prefix}", title="Generator Settings")
         logger.log_info(f"prefix changed to {prefix}")
     except Exception as e:
@@ -196,12 +196,12 @@ def get_postfix() -> None:
 
 
 @app.command()
-def change_postfix(
+def set_postfix(
         postfix: Annotated[str, typer.Argument(show_default=False, help="Text postfix.")],
 ) -> None:
     """Change ciphering postfix"""
     try:
-        generator.change_postfix(postfix)
+        generator.set_postfix(postfix)
         Interface.display_message(f"Postfix has been changed to {postfix}", title="Generator Settings")
         logger.log_info(f"postfix changed to {postfix}")
     except Exception as e:
@@ -230,7 +230,7 @@ def get_replacements() -> None:
 
 
 @app.command()
-def replace_character(
+def set_character(
         character: Annotated[str, typer.Argument(show_default=False,
                                                  help="Character to be replaced (one character).")],
         replacement: Annotated[str, typer.Argument(show_default=False,
@@ -238,7 +238,7 @@ def replace_character(
 ) -> None:
     """Replace character with a replacement string"""
     try:
-        generator.replace_character(character, replacement)
+        generator.set_character(character, replacement)
         Interface.display_message(f"Character '{character}' has been replaced with '{replacement}'", title="Generator Settings")
         logger.log_info(f"replace character '{character}' with '{replacement}'")
     except ValueError:

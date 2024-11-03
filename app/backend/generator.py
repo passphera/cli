@@ -4,11 +4,47 @@ from app.backend import auth
 from app.core import config, constants, settings
 
 
+def get_algorithm() -> str:
+    return config.generator.algorithm
+
+
+def set_algorithm(algorithm_name: str) -> None:
+    if auth.is_authenticated():
+        data = {
+            'algorithm': algorithm_name
+        }
+        response = requests.put(
+            f"{constants.ENDPOINT}/generator",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.algorithm = algorithm_name
+    settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, algorithm_name)
+
+
+def reset_algorithm() -> None:
+    if auth.is_authenticated():
+        data = {
+            'algorithm': constants.DEFAULT_ALGORITHM
+        }
+        response = requests.put(
+            f"{constants.ENDPOINT}/generator",
+            json=data,
+            headers=auth.get_auth_header()
+        )
+        if response.status_code != 200:
+            raise Exception(response.text)
+    config.generator.algorithm = constants.DEFAULT_ALGORITHM
+    settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, constants.DEFAULT_ALGORITHM)
+
+
 def get_shift() -> int:
     return config.generator.shift
 
 
-def change_shift(amount: int) -> None:
+def set_shift(amount: int) -> None:
     if auth.is_authenticated():
         data = {
             'shift': amount
@@ -44,7 +80,7 @@ def get_multiplier() -> int:
     return config.generator.multiplier
 
 
-def change_multiplier(value: int) -> None:
+def set_multiplier(value: int) -> None:
     if auth.is_authenticated():
         data = {
             'multiplier': value
@@ -80,7 +116,7 @@ def get_key() -> str:
     return config.generator.key
 
 
-def change_key(key: str) -> None:
+def set_key(key: str) -> None:
     if auth.is_authenticated():
         data = {
             'key': key
@@ -116,7 +152,7 @@ def get_prefix() -> str:
     return config.generator.prefix
 
 
-def change_prefix(prefix: str) -> None:
+def set_prefix(prefix: str) -> None:
     if auth.is_authenticated():
         data = {
             'prefix': prefix
@@ -152,7 +188,7 @@ def get_postfix() -> str:
     return config.generator.postfix
 
 
-def change_postfix(postfix: str) -> None:
+def set_postfix(postfix: str) -> None:
     if auth.is_authenticated():
         data = {
             'postfix': postfix
@@ -184,42 +220,6 @@ def reset_postfix() -> None:
     settings.set_key(constants.ENCRYPTION_METHOD, constants.POSTFIX, constants.DEFAULT_POSTFIX)
 
 
-def get_algorithm() -> str:
-    return config.generator.algorithm
-
-
-def change_algorithm(algorithm_name: str) -> None:
-    if auth.is_authenticated():
-        data = {
-            'algorithm': algorithm_name
-        }
-        response = requests.put(
-            f"{constants.ENDPOINT}/generator",
-            json=data,
-            headers=auth.get_auth_header()
-        )
-        if response.status_code != 200:
-            raise Exception(response.text)
-    config.generator.algorithm = algorithm_name
-    settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, algorithm_name)
-
-
-def reset_algorithm() -> None:
-    if auth.is_authenticated():
-        data = {
-            'algorithm': constants.DEFAULT_ALGORITHM
-        }
-        response = requests.put(
-            f"{constants.ENDPOINT}/generator",
-            json=data,
-            headers=auth.get_auth_header()
-        )
-        if response.status_code != 200:
-            raise Exception(response.text)
-    config.generator.algorithm = constants.DEFAULT_ALGORITHM
-    settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, constants.DEFAULT_ALGORITHM)
-
-
 def get_characters_replacements() -> dict[str, str]:
     if auth.is_authenticated():
         response = requests.get(f"{constants.ENDPOINT}/generator/", headers=auth.get_auth_header())
@@ -229,7 +229,7 @@ def get_characters_replacements() -> dict[str, str]:
     return settings.get_settings(constants.CHARACTERS_REPLACEMENTS)
 
 
-def replace_character(character: str, replacement: str) -> None:
+def set_character(character: str, replacement: str) -> None:
     if replacement in ['`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', '\'', '"', '|', '\\']:
         raise ValueError
     if auth.is_authenticated():

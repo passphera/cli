@@ -13,7 +13,7 @@ A robust command-line interface tool for generating and managing strong password
 
 ## Installation
 
-[Download from this link](https://github.com/passphera/cli)
+[Download from this link](https://github.com/passphera/cli/releases/)
 
 ## Quick Start
 
@@ -47,12 +47,12 @@ passphera vault get "password_context"
 
 ### Generator Commands (`generator`)
 Configure password generation settings:
-- Change encryption algorithm: `change-algorithm <algorithm>`
-- Set encryption key: `change-key <key>`
-- Adjust shift amount: `change-shift <amount>`
-- Set multiplier: `change-multiplier <value>`
-- Add prefix/postfix: `change-prefix/change-postfix <text>`
-- Character replacements: `replace-character <char> <replacement>`
+- Change encryption algorithm: `set-algorithm <algorithm>`
+- Character replacements: `set-character <char> <replacement>`
+- Set encryption key: `set-key <key>`
+- Adjust shift amount: `set-shift <amount>`
+- Set multiplier: `set-multiplier <value>`
+- Add prefix/postfix: `set-prefix/change-postfix <text>`
 
 All settings can be reset to defaults using corresponding `reset-*` commands.
 
@@ -81,16 +81,16 @@ passphera vault get "github"
 ### Custom Encryption Settings
 ```bash
 # Configure custom encryption settings
-passphera generator change-algorithm "playfair"
-passphera generator change-key "my_secret_key"
-passphera generator change-shift 5
-passphera generator change-multiplier 3
-passphera generator change-prefix "prefix_"
-passphera generator change-postfix "_suffix"
+passphera generator set-algorithm "playfair"
+passphera generator set-key "my_secret_key"
+passphera generator set-shift 5
+passphera generator set-multiplier 3
+passphera generator set-prefix "prefix_"
+passphera generator set-postfix "_suffix"
 
 # Apply character replacements
-passphera generator replace-character "a" "4@"
-passphera generator replace-character "e" "3*e1"
+passphera generator set-character "a" "4@"
+passphera generator set-character "e" "3*e1"
 ```
 
 ### Cloud Synchronization
@@ -132,5 +132,4 @@ This project is licensed under the Apache License, Version 2.0 - see [LICENSE](L
 If you encounter any issues or need assistance:
 
 - 📝 [Open an issue](https://github.com/passphera/cli/issues) on our GitHub repository
-- 📚 Check our [Documentation](https://github.com/passphera/cli/wiki) for detailed guides
 - 📧 Contact maintainers at: [passphera@gmail.com]

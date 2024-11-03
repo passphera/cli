@@ -32,24 +32,6 @@ Display current user credentials
 
 .SS Generator Commands
 .TP
-.B generator change-algorithm \fIALGORITHM\fR
-Change primary encryption algorithm
-.TP
-.B generator change-key \fIKEY\fR
-Set encryption key
-.TP
-.B generator change-multiplier \fIVALUE\fR
-Set multiplication factor
-.TP
-.B generator change-postfix \fIPOSTFIX\fR
-Set text postfix
-.TP
-.B generator change-prefix \fIPREFIX\fR
-Set text prefix
-.TP
-.B generator change-shift \fIAMOUNT\fR
-Set character shift amount
-.TP
 .B generator get-algorithm
 Show current algorithm
 .TP
@@ -71,9 +53,6 @@ Show all character replacements
 .B generator get-shift
 Show current shift amount
 .TP
-.B generator replace-character \fICHARACTER\fR \fIREPLACEMENT\fR
-Set character replacement
-.TP
 .B generator reset-algorithm
 Reset algorithm to default
 .TP
@@ -94,6 +73,27 @@ Reset specific character replacement
 .TP
 .B generator reset-shift
 Reset shift amount to default
+.TP
+.B generator set-algorithm \fIALGORITHM\fR
+Change primary encryption algorithm
+.TP
+.B generator set-character \fICHARACTER\fR \fIREPLACEMENT\fR
+Set character replacement
+.TP
+.B generator set-key \fIKEY\fR
+Change encryption key
+.TP
+.B generator set-multiplier \fIVALUE\fR
+Change multiplication factor
+.TP
+.B generator set-postfix \fIPOSTFIX\fR
+Change text postfix
+.TP
+.B generator set-prefix \fIPREFIX\fR
+Change text prefix
+.TP
+.B generator set-shift \fIAMOUNT\fR
+Change character shift amount
 .TP
 .B generator sync
 Sync settings with cloud
@@ -153,9 +153,9 @@ Configure encryption settings:
 .PP
 .nf
 .RS
-passphera generator change-algorithm playfair
-passphera generator change-key mysecretkey
-passphera generator change-shift 5
+passphera generator set-algorithm playfair
+passphera generator set-key mysecretkey
+passphera generator set-shift 5
 .RE
 .fi
 .PP
