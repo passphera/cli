@@ -89,8 +89,8 @@ passphera generator set-prefix "prefix_"
 passphera generator set-postfix "_suffix"
 
 # Apply character replacements
-passphera generator set-character "a" "4@"
-passphera generator set-character "e" "3*e1"
+passphera generator set-replacement "a" "4@"
+passphera generator set-replacement "e" "3*e1"
 ```
 
 ### Cloud Synchronization
