@@ -194,7 +194,7 @@ def set_postfix(postfix: str) -> None:
             'postfix': postfix
         }
         response = requests.put(
-            f"{config.ENDPOINT}/generator",
+            f"{constants.ENDPOINT}/generator",
             json=data,
             headers=auth.get_auth_header()
         )
@@ -220,7 +220,7 @@ def reset_postfix() -> None:
     settings.set_key(constants.ENCRYPTION_METHOD, constants.POSTFIX, constants.DEFAULT_POSTFIX)
 
 
-def get_characters_replacements() -> dict[str, str]:
+def get_replacements() -> dict[str, str]:
     if auth.is_authenticated():
         response = requests.get(f"{constants.ENDPOINT}/generator/", headers=auth.get_auth_header())
         if response.status_code != 200:
@@ -229,7 +229,7 @@ def get_characters_replacements() -> dict[str, str]:
     return settings.get_settings(constants.CHARACTERS_REPLACEMENTS)
 
 
-def set_character(character: str, replacement: str) -> None:
+def set_replacement(character: str, replacement: str) -> None:
     if replacement in ['`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', '\'', '"', '|', '\\']:
         raise ValueError
     if auth.is_authenticated():

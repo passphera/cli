@@ -221,16 +221,16 @@ def reset_postfix() -> None:
 
 @app.command()
 def get_replacements() -> None:
-    """Show all character's replacement strings"""
+    """Show all characters replacement strings"""
     try:
-        replacements: dict[str, str] = generator.get_characters_replacements()
+        replacements: dict[str, str] = generator.get_replacements()
         Interface.display_character_replacements(replacements)
     except Exception as e:
         handle_error(f"failed to get replacements: {e}")
 
 
 @app.command()
-def set_character(
+def set_replacement(
         character: Annotated[str, typer.Argument(show_default=False,
                                                  help="Character to be replaced (one character).")],
         replacement: Annotated[str, typer.Argument(show_default=False,
@@ -238,7 +238,7 @@ def set_character(
 ) -> None:
     """Replace character with a replacement string"""
     try:
-        generator.set_character(character, replacement)
+        generator.set_replacement(character, replacement)
         Interface.display_message(f"Character '{character}' has been replaced with '{replacement}'", title="Generator Settings")
         logger.log_info(f"replace character '{character}' with '{replacement}'")
     except ValueError:

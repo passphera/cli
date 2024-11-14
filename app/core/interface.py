@@ -20,7 +20,7 @@ console: Console = Console(theme=custom_theme)
 class Interface:
     @staticmethod
     def _create_panel(content: Any, title: str = None, style: str = 'info') -> Panel:
-        return Panel(content, title=title, title_align='left', border_style=style, box=box.ROUNDED)
+        return Panel.fit(content, title=title, title_align='left', border_style=style, box=box.ROUNDED)
 
     @classmethod
     def display_user_info(cls, user: dict[str, str]) -> None:
@@ -82,11 +82,13 @@ class Interface:
     @classmethod
     def display_version(cls) -> None:
         info = Text()
-        info.append("Version: ", style="highlight")
+        info.append("Program: ", style="highlight")
+        info.append(config.__name__)
+        info.append("\nVersion: ", style="highlight")
         info.append(config.__version__)
-        info.append("\nAuthor: ", style="highlight")
+        info.append("\nAuthor:  ", style="highlight")
         info.append(config.__author__)
-        info.append("\nEmail: ", style="highlight")
+        info.append("\nEmail:   ", style="highlight")
         info.append(config.__author_email__)
         console.print(cls._create_panel(info, "Version Information"))
 

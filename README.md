@@ -48,11 +48,11 @@ passphera vault get "password_context"
 ### Generator Commands (`generator`)
 Configure password generation settings:
 - Change encryption algorithm: `set-algorithm <algorithm>`
-- Character replacements: `set-character <char> <replacement>`
 - Set encryption key: `set-key <key>`
 - Adjust shift amount: `set-shift <amount>`
 - Set multiplier: `set-multiplier <value>`
-- Add prefix/postfix: `set-prefix/change-postfix <text>`
+- Add prefix/postfix: `set-prefix/set-postfix <text>`
+- Character replacements: `set-replacement <char> <replacement>`
 
 All settings can be reset to defaults using corresponding `reset-*` commands.
 

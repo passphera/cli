@@ -1,4 +1,4 @@
-.TH PASSPHERA 1 "November 2024" "1.0.0" "User Commands"
+.TH PASSPHERA 1 "November 2024" "1.0.1" "User Commands"
 
 .SH NAME
 passphera \- strong passwords generator and manager
@@ -77,9 +77,6 @@ Reset shift amount to default
 .B generator set-algorithm \fIALGORITHM\fR
 Change primary encryption algorithm
 .TP
-.B generator set-character \fICHARACTER\fR \fIREPLACEMENT\fR
-Set character replacement
-.TP
 .B generator set-key \fIKEY\fR
 Change encryption key
 .TP
@@ -91,6 +88,9 @@ Change text postfix
 .TP
 .B generator set-prefix \fIPREFIX\fR
 Change text prefix
+.TP
+.B generator set-replacement \fICHARACTER\fR \fIREPLACEMENT\fR
+Set character replacement
 .TP
 .B generator set-shift \fIAMOUNT\fR
 Change character shift amount

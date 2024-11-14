@@ -8,7 +8,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='passphera',
-    version='1.0.0',
+    version='1.0.1',
     author='Fathi Abdelmalek',
     url='https://github.com/passphera/cli',
     license='Apache-2.0',
