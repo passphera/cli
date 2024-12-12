@@ -12,7 +12,7 @@ from app.core.interface import Interface, Messages
 
 
 __name__: str = 'passphera'
-__version__: str = '1.0.1'
+__version__: str = '1.1.0'
 __author__: str = 'Fathi Abdelmalek'
 __author_email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'

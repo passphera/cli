@@ -1,10 +1,14 @@
+import base64
 from datetime import datetime, UTC
 
 import requests
 from tinydb import TinyDB, Query
 
 from app.backend import auth
+from app.core.config import generator
 from app.core import constants
+from app.core.security import derive_key, decrypt_password
+
 
 db: TinyDB
 Password: Query = Query()
@@ -16,7 +20,7 @@ def configure(path: str) -> None:
     db.default_table_name = 'passwords'
 
 
-def add_to_db(text: str, context: str, password: str) -> None:
+def add_to_db(text: str, context: str, password: str, salt: bytes) -> None:
     data = {
         'context': context,
         'text': text,
@@ -31,18 +35,24 @@ def add_to_db(text: str, context: str, password: str) -> None:
         data['created_at'] = datetime.now(UTC).strftime(constants.TIME_FORMAT)
         data['updated_at'] = datetime.now(UTC).strftime(constants.TIME_FORMAT)
     data['password'] = password
+    data['salt'] = base64.b64encode(salt).decode('utf-8')
     db.insert(data)
 
 
 def get_password(context: str) -> dict[str, str] | None:
-    password: dict[str, str]
     if auth.is_authenticated():
         response = requests.get(f'{constants.ENDPOINT}/passwords/{context}', headers=auth.get_auth_header())
         if response.status_code == 200:
             return response.json()
-    result = db.search(Password.context == context)
-    if result:
-        return dict(result[0])
+    passwords = db.search(Password.context == context)
+    if passwords:
+        password: dict[str, str] = passwords[0]
+        generated_password = generator.generate_password(password['text'])
+        encryption_key = derive_key(generated_password, base64.b64decode(password['salt']))
+        decrypted_password = decrypt_password(password['password'], encryption_key)
+        decrypted_entry = dict(password)
+        decrypted_entry['password'] = decrypted_password
+        return decrypted_entry
 
 
 def get_passwords() -> list[dict[str, str]]:
@@ -56,7 +66,7 @@ def get_passwords() -> list[dict[str, str]]:
     if local_passwords:
         for password in local_passwords:
             if password['context'] not in all_passwords:
-                all_passwords[password['context']] = password
+                all_passwords[password['context']] = get_password(password['context'])
     return list(all_passwords.values())
 
 
@@ -65,9 +75,7 @@ def update_password(text: str, context: str, password: str) -> None:
         data = {
             'text': text
         }
-        response = requests.put(f'{constants.ENDPOINT}/passwords/{context}',
-                                  json=data,
-                                  headers=auth.get_auth_header())
+        response = requests.put(f'{constants.ENDPOINT}/passwords/{context}', json=data, headers=auth.get_auth_header())
         if response.status_code != 200:
             raise Exception(response.text)
     db.update({

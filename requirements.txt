@@ -1,6 +1,9 @@
+cryptography
 passphera-core
 pycryptodome
+pyinstaller
 pyperclip
 requests
+setuptools
 tinydb
 typer
