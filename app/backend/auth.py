@@ -7,12 +7,11 @@ def validate_token() -> bool:
     token = settings.get_key(constants.AUTH, constants.ACCESS_TOKEN)
     if not token:
         return False
-    headers = {"Authorization": f"Bearer {token}"}
     params = {
         "token": token,
     }
     try:
-        response = requests.get(f"{constants.ENDPOINT}/auth/validate", headers=headers, params=params)
+        response = requests.get(f"{constants.ENDPOINT}/auth/validate", params=params)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
@@ -21,9 +20,8 @@ def validate_token() -> bool:
 def is_authenticated() -> bool:
     if validate_token():
         return settings.get_key(constants.AUTH, constants.ACCESS_TOKEN) is not None
-    else:
-        settings.delete_key(constants.AUTH, constants.ACCESS_TOKEN)
-        return False
+    settings.delete_key(constants.AUTH, constants.ACCESS_TOKEN)
+    return False
 
 
 def get_auth_header() -> dict[str, str]:

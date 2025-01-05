@@ -4,9 +4,8 @@ import typer
 
 from app.backend import auth
 from app.core import logger
-from app.core.functions import handle_error
+from app.core.decorators import handle_exception_decorator
 from app.core.interface import Interface
-
 
 app = typer.Typer(rich_markup_mode="rich")
 
@@ -16,6 +15,7 @@ def auth_callback() -> None:
     """Manage authentication: signup, login, logout."""
 
 
+@handle_exception_decorator("failed to login")
 @app.command()
 def login(
         email: Annotated[str, typer.Option("-e", "--email",
@@ -27,25 +27,21 @@ def login(
                                               help="Password to login."),],
 ) -> None:
     """Login to the app server with email and password"""
-    try:
-        auth.login(email, password)
-        Interface.display_message("logged in successfully", title='Authentication', style='success')
-        logger.log_info(f"logged in with user email {email}")
-    except Exception as e:
-        handle_error(f"failed to login: {e}")
+    auth.login(email, password)
+    Interface.display_message("logged in successfully", title='Authentication', style='success')
+    logger.log_info(f"logged in with user email {email}")
 
 
+@handle_exception_decorator("failed to logout")
 @app.command()
 def logout() -> None:
     """Logout from the app server"""
-    try:
-        auth.logout()
-        Interface.display_message("logged out successfully", title='Authentication', style='success')
-        logger.log_info("user logged out")
-    except Exception as e:
-        handle_error(f"failed to logout: {e}")
+    auth.logout()
+    Interface.display_message("logged out successfully", title='Authentication', style='success')
+    logger.log_info("user logged out")
 
 
+@handle_exception_decorator("failed to signup")
 @app.command()
 def signup(
         email: Annotated[str, typer.Option("-e", "--email",
@@ -62,21 +58,16 @@ def signup(
                                               )],
 ) -> None:
     """Register new user on the app server"""
-    try:
-        auth.signup(email, username, password)
-        Interface.display_message("user registered successfully", title='Authentication', style='success')
-        logger.log_info("registered new user in the app server")
-    except Exception as e:
-        handle_error(f"failed to signup: {e}")
+    auth.signup(email, username, password)
+    Interface.display_message("user registered successfully", title='Authentication', style='success')
+    logger.log_info("registered new user in the app server")
 
 
+@handle_exception_decorator("failed to get user")
 @app.command()
 def whoami() -> None:
     """Get user credentials"""
-    try:
-        Interface.display_user_info(auth.get_auth_user())
-    except Exception as e:
-        handle_error(f"failed to get user: {e}")
+    Interface.display_user_info(auth.get_auth_user())
 
 
 if __name__ == "__main__":

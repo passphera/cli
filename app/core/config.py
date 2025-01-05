@@ -12,12 +12,13 @@ from app.core.interface import Interface, Messages
 
 
 __name__: str = 'passphera'
-__version__: str = '1.1.0'
+__version__: str = '1.2.0'
 __author__: str = 'Fathi Abdelmalek'
 __author_email__: str = 'passphera@gmail.com'
 __url__: str = 'https://github.com/passphera/cli'
 __license__: str = 'Apache-2.0'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
+__description__: str = 'Strong passwords generator and manager'
 
 
 generator: PasswordGenerator = PasswordGenerator()

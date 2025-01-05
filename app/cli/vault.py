@@ -4,18 +4,21 @@ import typer
 
 from app.backend import vault
 from app.core import logger
+from app.core.decorators import handle_exception_decorator
 from app.core.functions import copy_to_clipboard, handle_error
 from app.core.interface import Interface, Messages
-
+from core.decorators import handle_value_error_decorator
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
+@handle_exception_decorator("")
 @app.callback()
 def vault_callback() -> None:
     """Access vault: get password or passwords, clear vault, sync vault data with cloud."""
 
 
+@handle_exception_decorator("failed to get password")
 @app.command()
 def get(context: Annotated[str, typer.Argument(show_default=False, help="Context of password to get.")]) -> None:
     """Get saved password"""
@@ -27,39 +30,31 @@ def get(context: Annotated[str, typer.Argument(show_default=False, help="Context
         copy_to_clipboard(password['password'])
     except ValueError:
         Interface.display_message(Messages.context_error(context), title='Error')
-    except Exception as e:
-        handle_error(f"failed to get password: {e}")
 
 
+@handle_exception_decorator("failed to get passwords")
 @app.command()
 def get_all() -> None:
     """Get all saved passwords"""
-    try:
-        Interface.display_passwords(vault.get_passwords())
-    except Exception as e:
-        handle_error(f"failed to get passwords: {e}")
+    Interface.display_passwords(vault.get_passwords())
 
 
+@handle_exception_decorator("failed to clear database")
 @app.command()
 def clear() -> None:
     """Clear history from all saved passwords"""
-    try:
-        vault.clear_db()
-        Interface.display_message(Messages.HISTORY_CLEARED, title="Vault")
-        logger.log_info("database cleared")
-    except Exception as e:
-        handle_error(f"failed to clear database: {e}")
+    vault.clear_db()
+    Interface.display_message(Messages.HISTORY_CLEARED, title="Vault")
+    logger.log_info("database cleared")
 
 
+@handle_exception_decorator("failed to sync vault")
 @app.command()
 def sync() -> None:
     """Sync with shared database"""
-    try:
-        local, server = vault.sync()
-        Interface.display_message(Messages.sync_vault(local, server))
-        logger.log_info("database synced")
-    except Exception as e:
-        handle_error(f"failed to sync vault: {e}")
+    local, server = vault.sync()
+    Interface.display_message(Messages.sync_vault(local, server))
+    logger.log_info("database synced")
 
 
 if __name__ == "__main__":
