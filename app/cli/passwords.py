@@ -5,7 +5,7 @@ import typer
 from app.backend import vault, passwords
 from app.core import logger
 from app.core.decorators import handle_exception_decorator
-from app.core.functions import copy_to_clipboard, handle_error
+from app.core.functions import copy_to_clipboard
 from app.core.interface import Interface, Messages
 
 
@@ -28,7 +28,7 @@ def generate(
         context: Annotated[Optional[str], typer.Option("-c", "--context",
                                                        help="Context to save the password.")] = ''
 ) -> None:
-    """Generate new password (and optionally save it)"""
+    """Generate a new password (and optionally save it)"""
     if not context:
         context = typer.prompt("Enter a context if you want to save the password", default="", show_default=False)
     password: str = passwords.generate_password(text, context)
@@ -50,7 +50,7 @@ def update(
     """Update a saved password"""
     db_password: dict[str, str] | None = vault.get_password(context)
     if db_password is None:
-        raise ValueError(f"entered unsaved password context {context}")
+        raise ValueError(f"entered unsaved password context '{context}'")
     if not text:
         text: str = typer.prompt("Enter text to encrypt (optional)", default=db_password['text'])
     password = passwords.update_password(context, text)

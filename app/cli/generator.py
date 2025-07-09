@@ -7,7 +7,6 @@ from passphera_core import InvalidAlgorithmException
 from app.backend import generator
 from app.core import logger
 from app.core.decorators import handle_exception_decorator
-from app.core.functions import handle_error
 from app.core.interface import Interface, Messages
 
 
@@ -17,7 +16,7 @@ app = typer.Typer(rich_markup_mode="rich")
 @handle_exception_decorator("")
 @app.callback()
 def generator_callback() -> None:
-    """Manage generator: configure the ciphering settings (shift amount, characters replacements, etc...)"""
+    """Manage generator: configure the ciphering settings (shift amount, character replacements, etc...)"""
 
 
 @handle_exception_decorator("failed to get algorithm")

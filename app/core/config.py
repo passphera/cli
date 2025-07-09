@@ -12,10 +12,10 @@ from app.core.interface import Interface, Messages
 
 
 __name__: str = 'passphera'
-__version__: str = '1.2.0'
+__version__: str = '2.0.0'
 __author__: str = 'Fathi Abdelmalek'
 __author_email__: str = 'passphera@gmail.com'
-__url__: str = 'https://github.com/passphera/cli'
+__url__: str = 'https://passphera-site.onrender.com'
 __license__: str = 'Apache-2.0'
 __copyright__: str = 'Copyright 2024, Fathi Abdelmalek'
 __description__: str = 'Strong passwords generator and manager'
@@ -84,27 +84,14 @@ def init_configurations() -> None:
         settings.set_section(constants.CHARACTERS_REPLACEMENTS)
         settings.set_section(constants.AUTH)
 
-        if auth.is_authenticated():
-            response = requests.get(f"{constants.ENDPOINT}/generator", headers=auth.get_auth_header())
-            if response.status_code != 200:
-                raise Exception(response.text)
-            generator.algorithm = response.json().get("algorithm")
-            generator.shift = response.json().get("shift")
-            generator.multiplier = response.json().get("multiplier")
-            generator.key = response.json().get("key")
-            generator.prefix = response.json().get("prefix")
-            generator.postfix = response.json().get("postfix")
-            for key, value in response.json().get('characters_replacements', {}).items():
-                generator.replace_character(key, value)
-        else:
-            generator.algorithm = settings.get_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, constants.DEFAULT_ALGORITHM)
-            generator.shift = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.SHIFT, constants.DEFAULT_SHIFT))
-            generator.multiplier = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.MULTIPLIER, constants.DEFAULT_MULTIPLIER))
-            generator.key = settings.get_key(constants.ENCRYPTION_METHOD, constants.KEY, constants.DEFAULT_KEY)
-            generator.prefix = settings.get_key(constants.ENCRYPTION_METHOD, constants.PREFIX, constants.DEFAULT_PREFIX)
-            generator.postfix = settings.get_key(constants.ENCRYPTION_METHOD, constants.POSTFIX, constants.DEFAULT_POSTFIX)
-            for key, value in settings.get_settings(constants.CHARACTERS_REPLACEMENTS).items():
-                generator.replace_character(key, value)
+        generator.algorithm = settings.get_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, constants.DEFAULT_ALGORITHM)
+        generator.shift = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.SHIFT, constants.DEFAULT_SHIFT))
+        generator.multiplier = int(settings.get_key(constants.ENCRYPTION_METHOD, constants.MULTIPLIER, constants.DEFAULT_MULTIPLIER))
+        generator.key = settings.get_key(constants.ENCRYPTION_METHOD, constants.KEY, constants.DEFAULT_KEY)
+        generator.prefix = settings.get_key(constants.ENCRYPTION_METHOD, constants.PREFIX, constants.DEFAULT_PREFIX)
+        generator.postfix = settings.get_key(constants.ENCRYPTION_METHOD, constants.POSTFIX, constants.DEFAULT_POSTFIX)
+        for key, value in settings.get_settings(constants.CHARACTERS_REPLACEMENTS).items():
+            generator.replace_character(key, value)
 
         settings.set_key(constants.ENCRYPTION_METHOD, constants.ALGORITHM, generator.algorithm)
         settings.set_key(constants.ENCRYPTION_METHOD, constants.SHIFT, str(generator.shift))

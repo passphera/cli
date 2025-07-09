@@ -7,7 +7,6 @@ from app.core import logger
 from app.core.decorators import handle_exception_decorator
 from app.core.functions import copy_to_clipboard, handle_error
 from app.core.interface import Interface, Messages
-from core.decorators import handle_value_error_decorator
 
 app = typer.Typer(rich_markup_mode="rich")
 
@@ -51,7 +50,7 @@ def clear() -> None:
 @handle_exception_decorator("failed to sync vault")
 @app.command()
 def sync() -> None:
-    """Sync with shared database"""
+    """Sync down from a shared database"""
     local, server = vault.sync()
     Interface.display_message(Messages.sync_vault(local, server))
     logger.log_info("database synced")

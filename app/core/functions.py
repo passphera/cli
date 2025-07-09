@@ -20,5 +20,5 @@ def copy_to_clipboard(password: str) -> None:
 
 
 def handle_error(error: str) -> None:
-    Interface.display_message(Messages.error(error), title="Error")
+    Interface.display_message(Messages.error(error), 'Error')
     logger.log_error(error)

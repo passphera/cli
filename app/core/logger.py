@@ -1,6 +1,6 @@
 import logging
 
-from app.core import interface
+from app.core.interface import Interface
 
 __logger__: logging.Logger | None = None
 
@@ -19,7 +19,7 @@ def configure(path: str) -> None:
 
             __logger__.addHandler(file_handler)
         except Exception as e:
-            interface.display_error(f"Error configuring logger: {e}")
+            Interface().display_message(f"{e}", style='error', title='Error configuring logger')
 
 
 def get_instance() -> logging.Logger:

@@ -24,26 +24,15 @@ def add_to_db(text: str, context: str, password: str, salt: bytes) -> None:
     data = {
         'context': context,
         'text': text,
+        'created_at': datetime.now(UTC).strftime(constants.TIME_FORMAT),
+        'updated_at': datetime.now(UTC).strftime(constants.TIME_FORMAT),
+        'password': password,
+        'salt': base64.b64encode(salt).decode('utf-8'),
     }
-    if auth.is_authenticated():
-        response = requests.post(f'{constants.ENDPOINT}/passwords', json=data, headers=auth.get_auth_header())
-        if response.status_code != 201:
-            raise Exception(response.text)
-        data['created_at'] = response.json().get('created_at')
-        data['updated_at'] = response.json().get('updated_at')
-    else:
-        data['created_at'] = datetime.now(UTC).strftime(constants.TIME_FORMAT)
-        data['updated_at'] = datetime.now(UTC).strftime(constants.TIME_FORMAT)
-    data['password'] = password
-    data['salt'] = base64.b64encode(salt).decode('utf-8')
     db.insert(data)
 
 
 def get_password(context: str) -> dict[str, str] | None:
-    if auth.is_authenticated():
-        response = requests.get(f'{constants.ENDPOINT}/passwords/{context}', headers=auth.get_auth_header())
-        if response.status_code == 200:
-            return response.json()
     passwords = db.search(Password.context == context)
     if passwords:
         password: dict[str, str] = passwords[0]
@@ -53,15 +42,11 @@ def get_password(context: str) -> dict[str, str] | None:
         decrypted_entry = dict(password)
         decrypted_entry['password'] = decrypted_password
         return decrypted_entry
+    return None
 
 
 def get_passwords() -> list[dict[str, str]]:
     all_passwords: dict[str, dict[str, str]] = {}
-    if auth.is_authenticated():
-        response = requests.get(f'{constants.ENDPOINT}/passwords', headers=auth.get_auth_header())
-        if response.status_code == 200:
-            for password in response.json():
-                all_passwords[password['context']] = password
     local_passwords = db.all()
     if local_passwords:
         for password in local_passwords:
@@ -71,13 +56,6 @@ def get_passwords() -> list[dict[str, str]]:
 
 
 def update_password(text: str, context: str, password: str) -> None:
-    if auth.is_authenticated():
-        data = {
-            'text': text
-        }
-        response = requests.put(f'{constants.ENDPOINT}/passwords/{context}', json=data, headers=auth.get_auth_header())
-        if response.status_code != 200:
-            raise Exception(response.text)
     db.update({
         'text': text,
         'updated_at': datetime.now(UTC).strftime(constants.TIME_FORMAT),
@@ -86,19 +64,11 @@ def update_password(text: str, context: str, password: str) -> None:
 
 
 def delete_password(context: str) -> bool:
-    if auth.is_authenticated():
-        response = requests.delete(f'{constants.ENDPOINT}/passwords/{context}', headers=auth.get_auth_header())
-        if response.status_code != 204:
-            raise Exception(response.text)
-    db.remove(Password.context == context)
-    return True
+    removed = db.remove(Password.context == context)
+    return len(removed) > 0
 
 
 def clear_db() -> None:
-    if auth.is_authenticated():
-        response = requests.delete(f'{constants.ENDPOINT}/passwords', headers=auth.get_auth_header())
-        if response.status_code != 204:
-            raise Exception(response.text)
     db.truncate()
 
 

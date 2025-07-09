@@ -57,7 +57,7 @@ def signup(
                                               help="Password."
                                               )],
 ) -> None:
-    """Register new user on the app server"""
+    """Register a new user on the app server"""
     auth.signup(email, username, password)
     Interface.display_message("user registered successfully", title='Authentication', style='success')
     logger.log_info("registered new user in the app server")

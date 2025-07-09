@@ -73,11 +73,11 @@ class Interface:
         console.print(cls._create_panel(table, "Generator Settings"))
 
     @classmethod
-    def display_message(cls, message: Text | str, style: str = 'info', title: str = '') -> None:
+    def display_message(cls, message: Text | str, title: str = '', style: str = 'info') -> None:
         if isinstance(message, Text):
-            console.print(cls._create_panel(message, style=message.style, title=title))
+            console.print(cls._create_panel(message, title=title, style=message.style))
         else:
-            console.print(cls._create_panel(Text(message, style=style), style=style, title=title))
+            console.print(cls._create_panel(Text(message, style=style), title=title, style=style))
 
     @classmethod
     def display_version(cls) -> None:

@@ -6,7 +6,8 @@ DEFAULT_POSTFIX: str = "postfix"
 DEFAULT_ALGORITHM: str = "hill"
 TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
-ENDPOINT: str = 'https://passphera-api.koyeb.app/api/v1'
+# ENDPOINT: str = 'https://passphera-api.koyeb.app/api/v1'
+ENDPOINT: str = 'http://127.0.0.1:8000/api/v2'
 
 AUTH: str = "Authentication"
 ENCRYPTION_METHOD: str = "Encryption Method"

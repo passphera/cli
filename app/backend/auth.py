@@ -34,10 +34,8 @@ def get_auth_header() -> dict[str, str]:
 
 
 def get_auth_user() -> dict[str, str]:
-    if not is_authenticated():
-        raise Exception("Not logged in")
     user = requests.get(f"{constants.ENDPOINT}/auth/users/me", headers=get_auth_header())
-    return user.json()
+    return user.json()['user']
 
 
 def login(email: str, password: str) -> None:

@@ -22,7 +22,7 @@ def update_password(context: str, text: str) -> str:
     if not db_password:
         raise Exception("Password don't exist")
     generated_password = generator.generate_password(text)
-    encryption_key = derive_key(generated_password, base64.b16decode(db_password['salt']))
+    encryption_key = derive_key(generated_password, base64.b64decode(db_password['salt']))
     encrypted_password = encrypt_password(generated_password, encryption_key)
     vault.update_password(text, context, encrypted_password)
     return generated_password
@@ -30,6 +30,7 @@ def update_password(context: str, text: str) -> str:
 
 def delete_password(context: str) -> dict[str, str]:
     password: dict[str, str] | None = vault.get_password(context)
-    if not vault.delete_password(context):
+    if password is None:
         raise Exception("Password don't exist")
+    vault.delete_password(context)
     return password

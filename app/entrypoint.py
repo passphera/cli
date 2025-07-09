@@ -3,7 +3,6 @@ import typer
 from app.cli import passwords, generator, vault, auth
 from app.core import config, functions
 
-
 app: typer.Typer = typer.Typer(rich_markup_mode="rich", no_args_is_help=True,
                                context_settings={"help_option_names": ["-h", "--help"]},
                                add_completion=False)
