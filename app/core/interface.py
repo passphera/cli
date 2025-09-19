@@ -54,6 +54,15 @@ class Interface:
         console.print(cls._create_panel(table, "Stored Passwords"))
 
     @classmethod
+    def display_generator_settings(cls, settings: dict[str, Any]) -> None:
+        table = Table(show_header=True, header_style="bold magenta", box=box.SIMPLE_HEAVY)
+        table.add_column("Setting", style="cyan")
+        table.add_column("Value", style="green")
+        for setting, value in settings.items():
+            table.add_row(setting, str(value))
+        console.print(cls._create_panel(table, "Settings"))
+
+    @classmethod
     def display_character_replacement(cls, character: str, replacement: str) -> None:
         text = Text()
         text.append(character, style="cyan")
@@ -99,7 +108,7 @@ class Messages:
         return Text(message, style=style)
 
     SETTINGS_SYNCED = _style_message(
-        "Settings synced successfully. All settings now match the cloud settings.",
+        "Generator settings synced",
         "success")
     COPIED_TO_CLIPBOARD = _style_message(
         "Your password has been copied to your clipboard. Just paste it.",
@@ -115,6 +124,10 @@ class Messages:
     Allowed special characters: '!', '@', '$', '^', '-', '_', '=', '+', ',', '.', '/', ':'
     Disallowed special characters: '`', '~', '#', '%', '&', '*', '(', ')', '<', '>', '?', ';', ''', '"', '|', '\\'""",
         "error")
+
+    @staticmethod
+    def password_deleted(context: str) -> Text:
+        return Text(f"Password with context '{context}' was deleted successfully", style="success")
 
     @staticmethod
     def sync_vault(local: int, server: int) -> Text:

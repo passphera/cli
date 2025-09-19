@@ -1,10 +1,9 @@
 import os
 from configparser import ConfigParser
+from typing import Optional
 
 
-FILE: str | None = None
-
-
+FILE: Optional[str] = None
 __config: ConfigParser = ConfigParser()
 
 
@@ -15,11 +14,13 @@ def configure(path: str) -> None:
 
 
 def load_settings() -> None:
-    if FILE and os.path.exists(FILE):
+    if FILE:
         __config.read(FILE)
 
 
 def save_settings() -> None:
+    if not FILE:
+        raise RuntimeError("Settings file not configured")
     with open(FILE, 'w') as configfile:
         __config.write(configfile)
 
@@ -36,23 +37,22 @@ def set_key(section: str, key: str, value: str) -> None:
 
 
 def delete_key(section: str, key: str) -> None:
-    __config.remove_option(section, key)
-    save_settings()
+    if __config.has_option(section, key):
+        __config.remove_option(section, key)
+        save_settings()
 
 
 def set_section(section: str) -> None:
     if not __config.has_section(section):
         __config.add_section(section)
+        save_settings()
 
 
 def delete_section(section: str) -> None:
-    __config.remove_section(section)
-    save_settings()
+    if __config.has_section(section):
+        __config.remove_section(section)
+        save_settings()
 
 
 def get_settings(section: str) -> dict[str, str]:
-    items = {}
-    if __config.has_section(section):
-        for key, value in __config.items(section):
-            items[key] = value
-    return items
+    return dict(__config.items(section)) if __config.has_section(section) else {}

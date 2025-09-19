@@ -10,6 +10,7 @@ from app.core.interface import Interface
 app = typer.Typer(rich_markup_mode="rich")
 
 
+@handle_exception_decorator("")
 @app.callback()
 def auth_callback() -> None:
     """Manage authentication: signup, login, logout."""
