@@ -1,135 +1,108 @@
-# passphera cli
+# passphera CLI
 
-A robust command-line interface tool for generating and managing strong passwords using cryptographic algorithms.
+A minimal yet powerful command-line interface for generating and managing strong passwords, built on top of the **passphera core** philosophy: *"your text becomes your key to secure passwords."*
 
 ## Features
 
-- 🔐 Strong password generation with customizable encryption settings
-- 🔄 Multiple cipher algorithms support
-- 👤 User authentication system
-- 📦 Local password vault
-- ☁️ Cloud sync capabilities
-- 🛠️ Extensive configuration options
+* 🔐 Password generation from any text input
+* 🔄 Multiple cipher algorithms support (Affine, Hill, Playfair, etc.)
+* 🧩 Configurable steps (prefix, postfix, replacements, etc.)
+* 📦 Local password vault (TinyDB for CLI)
+* 🛠️ Flexible generator settings per user
+* 🚀 Fully offline by default
 
 ## Installation
 
-[Download from this link](https://github.com/passphera/cli/releases/)
+[Download the latest release](https://passphera.imfathi.com/)
 
 ## Quick Start
 
-1. Sign up for an account:
+1. Generate a password:
+
 ```bash
-passphera auth signup -e your@email.com -n username -p your_password
+passphera generate -t "my password for twitter" -c "twitter"
 ```
 
-2. Log in:
-```bash
-passphera auth login -e your@email.com -p your_password
-```
+2. Retrieve it later:
 
-3. Generate a password:
 ```bash
-passphera passwords generate -t "base_text" -c "password_context"
-```
-
-4. Retrieve a saved password:
-```bash
-passphera vault get "password_context"
+passphera vault get "twitter"
 ```
 
 ## Command Groups
 
-### Authentication Commands (`auth`)
-- `login` - Log in with email and password
-- `logout` - Log out from the current session
-- `signup` - Create a new account
-- `whoami` - Display current user credentials
+* `generate` - Alias to `vault add`
 
 ### Generator Commands (`generator`)
-Configure password generation settings:
-- Change encryption algorithm: `set-algorithm <algorithm>`
-- Set encryption key: `set-key <key>`
-- Adjust shift amount: `set-shift <amount>`
-- Set multiplier: `set-multiplier <value>`
-- Add prefix/postfix: `set-prefix/set-postfix <text>`
-- Character replacements: `set-replacement <char> <replacement>`
 
-All settings can be reset to defaults using corresponding `reset-*` commands.
+### Vault Commands (`vault`)
 
-### Password Management (`passwords`)
-- `generate` - Create new passwords
-- `update` - Modify existing passwords
-- `delete` - Remove passwords
+* `add` - Generate a new password and optionally save it to the vault
+* `get` - Get saved password from the vault
+* `update` - Update password in the vault
+* `delete` - Delete saved password from the vault
+* `list` -Get all saved passwords from the vault
+* `flush` - Flush the vault (delete all passwords)
+* `sync` - Sync down from the cloud
 
-### Vault Operations (`vault`)
-- `get` - Retrieve a specific password
-- `get-all` - List all saved passwords
-- `clear` - Remove all saved passwords
-- `sync` - Synchronize with cloud storage
+Configure password generation:
 
-## Configuration Examples
+* `show` - Show generator settings
+* `set <prop> <algorithm>` – Set a new value to a property
+* `reset <prop> <algorithm>` – Reset a property to its default value
+* `set-replacement <char> <replacement>` – Replace a character with a replacement string
+* `reset-replacement <char> <replacement>` – Reset a character's replacement
+* `sync` – Sync local settings with cloud settings id logged in
 
-### Basic Password Generation
+### Authentication Commands (`auth`)
+
+* `login` - Login to the app server with email and password
+* `logout` - Logout from the app server
+* `signup` - Register a new user on the app server
+* `whoami` - Get user credentials
+
+## Examples
+
+### Basic
+
 ```bash
-# Generate a password for GitHub account
-passphera passwords generate -t "github 1234 master" -c "github"
+# Generate and store
+passphera generate -t "github personal account" -c "github"  # or passphera vault add
 
-# Retrieve the password later
+# Retrieve
 passphera vault get "github"
 ```
 
-### Custom Encryption Settings
-```bash
-# Configure custom encryption settings
-passphera generator set-algorithm "playfair"
-passphera generator set-key "my_secret_key"
-passphera generator set-shift 5
-passphera generator set-multiplier 3
-passphera generator set-prefix "prefix_"
-passphera generator set-postfix "_suffix"
+### Custom Generator Settings
 
-# Apply character replacements
-passphera generator set-replacement "a" "4@"
-passphera generator set-replacement "e" "3*e1"
+```bash
+# Configure generator
+passphera generator set algorithm "playfair"
+passphera generator set key "secret"
+passphera generator set prefix "prefix_"
+passphera generator set postfix "_suffix"
+passphera generator set-replacement "a" "@25"
 ```
 
-### Cloud Synchronization
-```bash
-# Sync generator settings
-passphera generator sync
+### Global options
 
-# Sync vault data
-passphera vault sync
-```
 
-## Options
-
-Global options available for all commands:
-- `-h, --help` - Show help message
-
-## Security Best Practices
-
-1. Always use a strong master password for your account
-2. Regularly sync your vault if using cloud features
-3. Clear your vault data when needed using `vault clear`
-4. Avoid sharing your encryption keys
-5. Regularly update your saved passwords
+* `-v, --version` – Show version and exit
+* `-h, --help` – Show help message and exit
 
 ## Development
 
-The project is open source and welcomes contributions. Please follow these steps to contribute:
+Open source, contributions welcome!
 
-1. Fork the repository
+1. Fork the repo
 2. Create a feature branch
 3. Submit a pull request
 
 ## License
 
-This project is licensed under the Apache License, Version 2.0 - see [LICENSE](LICENSE) file for details.
+Licensed under Apache License 2.0 – see [LICENSE](LICENSE).
 
 ## Support
 
-If you encounter any issues or need assistance:
-
-- 📝 [Open an issue](https://github.com/passphera/cli/issues) on our GitHub repository
-- 📧 Contact maintainers at: [passphera@gmail.com]
+* 📝 [GitHub Issues](https://github.com/passphera/cli/issues)
+* 📧 Contact: \[[passphera@imfathi.com](mailto:passphera@imfathi.com)]
