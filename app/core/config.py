@@ -1,25 +1,9 @@
 import os
 import platform
-from dataclasses import dataclass
 from datetime import datetime as dt
 
 from app.core import constants, logger, repositories, settings
 from app.core.interface import Interface, Messages
-
-
-@dataclass(frozen=True)
-class AppMetadata:
-    NAME: str = "passphera"
-    VERSION: str = "2.0.0"
-    AUTHOR: str = "Fathi Abdelmalek"
-    AUTHOR_EMAIL: str = "passphera@imfathi.com"
-    URL: str = "https://passphera.imfathi.com"
-    LICENSE: str = "Apache-2.0"
-    COPYRIGHT: str = "Copyright 2025, Fathi Abdelmalek"
-    DESCRIPTION: str = "Strong passwords generator and manager"
-
-
-APP = AppMetadata()
 
 
 def setup_xdg_variables() -> None:

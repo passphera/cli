@@ -1,7 +1,11 @@
+from uuid import uuid4
+
 from tinydb import TinyDB, Query
 
 from passphera_core.entities import Generator, Password
 from passphera_core.interfaces import GeneratorRepository, VaultRepository
+
+from app.core import constants
 
 
 class TinyDBContext:
@@ -26,29 +30,39 @@ def get_db_context() -> TinyDBContext:
 
 
 class TinyDBGeneratorRepository(GeneratorRepository):
-    GENERATOR_ID = "singleton"
-
     def __init__(self):
         self.ctx = get_db_context()
 
     def save(self, generator: Generator) -> None:
         self.ctx.generator_table.upsert(
             self._to_dict(generator),
-            Query().id == self.GENERATOR_ID
+            Query().id == generator.id
         )
 
     def get(self) -> Generator:
-        data = self.ctx.generator_table.get(Query().id == self.GENERATOR_ID)
-        return self._from_dict(data)
+        data = self.ctx.generator_table.all()
+        if not data:
+            generator: Generator = Generator(
+                id=uuid4(),
+                shift=int(constants.DEFAULT_SHIFT),
+                multiplier=int(constants.DEFAULT_MULTIPLIER),
+                key=constants.DEFAULT_KEY,
+                algorithm=constants.DEFAULT_ALGORITHM,
+                prefix=constants.DEFAULT_PREFIX,
+                postfix=constants.DEFAULT_POSTFIX,
+            )
+            self.save(generator)
+            return generator
+        return self._from_dict(data[0])
 
     def update(self, generator: Generator) -> None:
         self.save(generator)
 
     def _to_dict(self, generator: Generator) -> dict:
         return {
-            "id": self.GENERATOR_ID,
-            "created_at": generator.created_at,
-            "updated_at": generator.updated_at,
+            "id": str(generator.id),
+            "created_at": str(generator.created_at),
+            "updated_at": str(generator.updated_at),
             "shift": generator.shift,
             "multiplier": generator.multiplier,
             "key": generator.key,

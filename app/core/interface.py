@@ -2,7 +2,7 @@ from typing import Any, Union
 
 from typer.rich_utils import Console, Panel, Table, Text, Theme, box
 
-from app.core import config
+from app.core.constants import APP
 
 
 custom_theme = Theme({
@@ -91,14 +91,16 @@ class Interface:
     @classmethod
     def display_version(cls) -> None:
         info = Text()
-        info.append("Program: ", style="highlight")
-        info.append(config.__name__)
-        info.append("\nVersion: ", style="highlight")
-        info.append(config.__version__)
-        info.append("\nAuthor:  ", style="highlight")
-        info.append(config.__author__)
-        info.append("\nEmail:   ", style="highlight")
-        info.append(config.__author_email__)
+        info.append("Program    ", style="highlight")
+        info.append(APP.NAME)
+        info.append("\nVersion    ", style="highlight")
+        info.append(APP.VERSION)
+        info.append("\nAuthor     ", style="highlight")
+        info.append(APP.AUTHOR)
+        info.append("\nEmail      ", style="highlight")
+        info.append(APP.AUTHOR_EMAIL)
+        info.append("\nCopyright  ", style="highlight")
+        info.append(APP.COPYRIGHT)
         console.print(cls._create_panel(info, "Version Information"))
 
 

@@ -1,4 +1,4 @@
-.TH PASSPHERA 1 "November 2024" "1.2.0" "User Commands"
+.TH PASSPHERA 1 "September 2025" "1.2.0" "User Commands"
 
 .SH NAME
 passphera \- strong passwords generator and manager
@@ -12,14 +12,15 @@ passphera \- strong passwords generator and manager
 
 .SH DESCRIPTION
 .B passphera
-is a command-line tool for generating and managing strong passwords using cryptographic algorithms. It offers customizable encryption settings, local password storage, and cloud synchronization capabilities.
+is an offline-first password generator and manager.
+It lets you generate strong, consistent passwords based on customizable settings, manage them locally, and optionally synchronize both your vault and generator configuration with the cloud. capabilities.
 
 .SH COMMANDS
 
 .SS Authentication Commands
 .TP
 .B auth login \-e \fIEMAIL\fR \-p \fIPASSWORD\fR
-Login to the app server
+Login with your email and passowrd
 .TP
 .B auth logout
 Logout from the current session
@@ -28,97 +29,47 @@ Logout from the current session
 Register new user
 .TP
 .B auth whoami
-Display current user credentials
+Display current logged in user
 
 .SS Generator Commands
 .TP
-.B generator get-algorithm
-Show current algorithm
+.B generator show
+Show all generator settings
 .TP
-.B generator get-key
-Show current key
+.B generator set \fIPROPERTY\fR \fIVALUE\fR
+Set generator property (shift, multiplier, key, algorithm, prefix, postfix)
 .TP
-.B generator get-multiplier
-Show current multiplier
-.TP
-.B generator get-postfix
-Show current postfix
-.TP
-.B generator get-prefix
-Show current prefix
-.TP
-.B generator get-replacements
-Show all character replacements
-.TP
-.B generator get-shift
-Show current shift amount
-.TP
-.B generator reset-algorithm
-Reset algorithm to default
-.TP
-.B generator reset-key
-Reset key to default
-.TP
-.B generator reset-multiplier
-Reset multiplier to default
-.TP
-.B generator reset-postfix
-Reset postfix to default
-.TP
-.B generator reset-prefix
-Reset prefix to default
-.TP
-.B generator reset-replacement \fICHARACTER\fR
-Reset specific character replacement
-.TP
-.B generator reset-shift
-Reset shift amount to default
-.TP
-.B generator set-algorithm \fIALGORITHM\fR
-Change primary encryption algorithm
-.TP
-.B generator set-key \fIKEY\fR
-Change encryption key
-.TP
-.B generator set-multiplier \fIVALUE\fR
-Change multiplication factor
-.TP
-.B generator set-postfix \fIPOSTFIX\fR
-Change text postfix
-.TP
-.B generator set-prefix \fIPREFIX\fR
-Change text prefix
+.B generator reset \fIPROPERTY\fR
+Reset a property to its default value
 .TP
 .B generator set-replacement \fICHARACTER\fR \fIREPLACEMENT\fR
 Set character replacement
 .TP
-.B generator set-shift \fIAMOUNT\fR
-Change character shift amount
+.B generator reset-replacement \fICHARACTER\fR
+Reset character replacement
 .TP
-.B generator sync
-Sync settings with cloud
-
-.SS Password Management Commands
-.TP
-.B passwords delete \fICONTEXT\fR
-Delete saved password
-.TP
-.B passwords generate \-t \fITEXT\fR [\-c \fICONTEXT\fR]
-Generate new password and optionally save it
-.TP
-.B passwords update \fICONTEXT\fR [\-t \fITEXT\fR]
-Update existing password
+.B generator sync [up|down]
+Synchronize generator settings with the cloud
 
 .SS Vault Commands
 .TP
-.B vault clear
-Clear all saved passwords
+.B vault add \-t \fITEXT\fR \-c \fICONTEXT\fR
+Generate a new password and optionally save it
 .TP
 .B vault get \fICONTEXT\fR
-Retrieve specific password
+Get a saved password by its context and copy it to the clipboard
 .TP
-.B vault get-all
-List all saved passwords
+.B vault update \fICONTEXT\fR \-t \fITEXT\fR
+Update a saved password
+.TP
+.B vault delete \fICONTEXT\fR
+Delete a saved password
+.TP
+.B vault list
+List all saved passwords on the vault
+.TP
+.B vault flush
+Flush the vault and delete all saved passwords
 .TP
 .B vault sync
 Synchronize with cloud storage
@@ -145,7 +96,7 @@ Generate and save a password:
 .PP
 .nf
 .RS
-passphera passwords generate -t "master_key" -c "github"
+passphera vault add -t "master_key" -c "github" or passphera generate -t "master_key" -c "github"
 .RE
 .fi
 .PP
@@ -153,9 +104,9 @@ Configure encryption settings:
 .PP
 .nf
 .RS
-passphera generator set-algorithm playfair
-passphera generator set-key mysecretkey
-passphera generator set-shift 5
+passphera generator set algorithm playfair
+passphera generator set key mysecretkey
+passphera generator set shift 5
 .RE
 .fi
 .PP
@@ -169,17 +120,17 @@ passphera vault get "github"
 
 .SH FILES
 .TP
-.I ~/.config/passphera/cli/config.ini
+.I ~/.config/passphera/config.ini
 User configuration file
 .TP
-.I ~/.local/share/passphera/cli/.vault
-Local password vault database
+.I ~/.local/share/passphera/.vault
+The local database
 
 .SH BUGS
 Report bugs at: https://github.com/passphera/cli/issues
 
 .SH AUTHOR
-Fathi Abdelmalek <passphera@gmail.com>
+Fathi Abdelmalek <passphera@imfathi.com>
 
 .SH COPYRIGHT
 Copyright © 2024 Fathi Abdelmalek. Licensed under Apache License 2.0.

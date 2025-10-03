@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 app_path = os.path.join(os.path.dirname(__file__), "app")
 sys.path.insert(0, app_path)
 
-from core.config import APP
+from core.constants import APP
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
@@ -20,7 +20,6 @@ setup(
     author_email=APP.AUTHOR_EMAIL,
     url=APP.URL,
     license=APP.LICENSE,
-    copyright=APP.COPYRIGHT,
     description=APP.DESCRIPTION,
     install_requires=requirements,
     long_description=long_description,

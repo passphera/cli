@@ -1,30 +1,26 @@
-from typing import Annotated, Literal
+from typing import Annotated
 
 import typer
 
 from app.backend import generator
 from app.core import logger
-from app.core.decorators import handle_exception_decorator
 from app.core.interface import Interface, Messages
 
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@handle_exception_decorator("")
 @app.callback()
 def generator_callback() -> None:
     """Manage generator: configure the ciphering settings (shift amount, character replacements, etc...)"""
 
 
-@handle_exception_decorator("failed to show generator settings")
 @app.command(name="show")
 def show_properties() -> None:
     """Show generator settings"""
     Interface.display_generator_settings(generator.show_properties())
 
 
-@handle_exception_decorator("failed to set a new value to property")
 @app.command(name="set")
 def set_property(
         prop: Annotated[str, typer.Argument(show_default=False, help="Property to edit (shit, multiplier, key, algorithm, prefix, postfix).")],
@@ -37,7 +33,6 @@ def set_property(
     logger.log_info(message)
 
 
-@handle_exception_decorator("failed to reset property to its default value")
 @app.command(name="reset")
 def reset_property(
         prop: Annotated[str, typer.Argument(show_default=False, help="Property to edit (shit, multiplier, key, algorithm, prefix, postfix).")]
@@ -49,7 +44,6 @@ def reset_property(
     logger.log_info(message)
 
 
-@handle_exception_decorator("failed to change character replacement")
 @app.command(name="set-replacement")
 def set_character_replacement(
         character: Annotated[str, typer.Argument(show_default=False,
@@ -63,7 +57,6 @@ def set_character_replacement(
     logger.log_info(f"replace character '{character}' with '{replacement}'")
 
 
-@handle_exception_decorator("failed to reset character replacement")
 @app.command(name="reset-replacement")
 def reset_character_replacement(
         character: Annotated[str, typer.Argument(help="Character to reset it.")]
@@ -74,16 +67,12 @@ def reset_character_replacement(
     logger.log_info(f"removed replacement for character {character}")
 
 
-@handle_exception_decorator("failed to sync generator")
-@app.command()
-def sync(
-        way: Annotated[
-            Literal["up", "down"],
-            typer.Argument(help="Direction of sync: 'up' (local → cloud) or 'down' (cloud → local)")
-        ]
+@app.command(name="sync")
+def sync_generator(
+        way: Annotated[str, typer.Argument(help="Direction of sync: 'up' (local → cloud) or 'down' (cloud → local)")]
 ) -> None:
     """Sync local settings with cloud settings id logged in"""
-    generator.sync(way)
+    generator.sync_generator(way)
     Interface.display_message(Messages.SETTINGS_SYNCED, title="Generator Settings")
     logger.log_info(f"generator synced {way}")
 

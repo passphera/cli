@@ -4,20 +4,18 @@ import typer
 
 from app.backend import auth
 from app.core import logger
-from app.core.decorators import handle_exception_decorator
 from app.core.interface import Interface
+
 
 app = typer.Typer(rich_markup_mode="rich")
 
 
-@handle_exception_decorator("")
 @app.callback()
 def auth_callback() -> None:
     """Manage authentication: signup, login, logout."""
 
 
-@handle_exception_decorator("failed to login")
-@app.command()
+@app.command(name="login")
 def login(
         email: Annotated[str, typer.Option("-e", "--email",
                                            prompt=True, show_default=False,
@@ -33,8 +31,7 @@ def login(
     logger.log_info(f"logged in with user email {email}")
 
 
-@handle_exception_decorator("failed to logout")
-@app.command()
+@app.command(name="logout")
 def logout() -> None:
     """Logout from the app server"""
     auth.logout()
@@ -42,8 +39,7 @@ def logout() -> None:
     logger.log_info("user logged out")
 
 
-@handle_exception_decorator("failed to signup")
-@app.command()
+@app.command(name="signup")
 def signup(
         email: Annotated[str, typer.Option("-e", "--email",
                                            prompt=True, show_default=False,
@@ -64,9 +60,8 @@ def signup(
     logger.log_info("registered new user in the app server")
 
 
-@handle_exception_decorator("failed to get user")
-@app.command()
-def whoami() -> None:
+@app.command(name="whoami")
+def get_auth_user() -> None:
     """Get user credentials"""
     Interface.display_user_info(auth.get_auth_user())
 
